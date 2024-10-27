@@ -369,7 +369,8 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding?>(), View.OnClickL
 
     //转发短信
     @SuppressLint("UseSwitchCompatOrMaterialCode")
-    private fun switchEnableSms(sbEnableSms: SwitchButton) {
+    private fun
+            switchEnableSms(sbEnableSms: SwitchButton) {
         sbEnableSms.setOnCheckedChangeListener { _: CompoundButton?, isChecked: Boolean ->
             SettingUtils.enableSms = isChecked
             if (isChecked) {
