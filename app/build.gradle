@@ -127,21 +127,8 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             if (isNeedPackage.toBoolean()) {
                 signingConfig signingConfigs.release
-                if (file('local.properties').exists()) {
-                    Properties properties = new Properties()
-                    properties.load(project.rootProject.file('local.properties').newDataInputStream())
-                    def appID = properties.getProperty("APP_ID_UMENG")
-                    if (appID != null) {
-                        buildConfigField "String", "APP_ID_UMENG", appID
-                    } else {
-                        buildConfigField "String", "APP_ID_UMENG", '"60254fc7425ec25f10f4293e"'
-                    }
-                } else {
-                    buildConfigField "String", "APP_ID_UMENG", '"60254fc7425ec25f10f4293e"'
-                }
             } else {
                 signingConfig signingConfigs.debug
-                buildConfigField "String", "APP_ID_UMENG", '"60254fc7425ec25f10f4293e"'
             }
         }
     }
