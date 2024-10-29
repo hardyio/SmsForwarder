@@ -106,7 +106,7 @@
     <string name="tipWaitService">Starting service</string>
 
     <string name="app_name">SmsForwarder</string>
-    <string name="notification_content">Not only forwarding messages, \nbut also a must-have for backup devices!\nFree and open source, no selling!</string>
+    <string name="notification_content">Running...</string>
     <!--Common-->
     <string name="cancel">Cancel</string>
     <string name="discard">Discard</string>

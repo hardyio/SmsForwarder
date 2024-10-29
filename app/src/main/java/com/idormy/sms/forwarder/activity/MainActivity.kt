@@ -30,7 +30,6 @@ import com.idormy.sms.forwarder.fragment.AppListFragment
 import com.idormy.sms.forwarder.fragment.ClientFragment
 import com.idormy.sms.forwarder.fragment.FrpcFragment
 import com.idormy.sms.forwarder.fragment.LogsFragment
-import com.idormy.sms.forwarder.fragment.MainFragment
 import com.idormy.sms.forwarder.fragment.RulesFragment
 import com.idormy.sms.forwarder.fragment.SendersFragment
 import com.idormy.sms.forwarder.fragment.ServerFragment
@@ -153,8 +152,8 @@ class MainActivity : BaseActivity<ActivityMainBinding?>(), DrawerAdapter.OnItemS
         WidgetUtils.addTabWithoutRipple(mTabLayout, getString(R.string.menu_settings), R.drawable.selector_icon_tabbar_settings)
         WidgetUtils.setTabLayoutTextFont(mTabLayout)
 
-        switchPage(MainFragment::class.java)
-//        switchPage(LogsFragment::class.java)
+//        switchPage(MainFragment::class.java)
+        switchPage(LogsFragment::class.java)
         mTabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab) {
                 needToAppListFragment = false
