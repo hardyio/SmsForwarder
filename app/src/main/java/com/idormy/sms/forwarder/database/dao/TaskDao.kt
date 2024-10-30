@@ -11,6 +11,7 @@ import androidx.room.Update
 import androidx.sqlite.db.SupportSQLiteQuery
 import com.idormy.sms.forwarder.database.entity.Task
 import io.reactivex.Single
+import kotlinx.coroutines.flow.Flow
 import java.util.Date
 
 @Dao
@@ -59,4 +60,6 @@ interface TaskDao {
     @Query("SELECT * FROM Task WHERE status = 1 AND type = :taskType")
     fun getByType(taskType: Int): List<Task>
 
+    @Query("SELECT COUNT(id) FROM Task WHERE type >= 1000")
+    fun getMineCount(): Flow<Long>
 }

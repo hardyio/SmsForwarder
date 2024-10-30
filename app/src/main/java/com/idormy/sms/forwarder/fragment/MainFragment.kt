@@ -1,6 +1,7 @@
 package com.idormy.sms.forwarder.fragment
 
 import android.annotation.SuppressLint
+import android.os.Build
 import android.text.InputType
 import android.text.TextUtils
 import android.view.LayoutInflater
@@ -22,30 +23,43 @@ import com.idormy.sms.forwarder.R
 import com.idormy.sms.forwarder.activity.MainActivity
 import com.idormy.sms.forwarder.adapter.MsgPagingAdapter
 import com.idormy.sms.forwarder.core.BaseFragment
+import com.idormy.sms.forwarder.core.Core
 import com.idormy.sms.forwarder.database.entity.LogsDetail
 import com.idormy.sms.forwarder.database.entity.MsgAndLogs
 import com.idormy.sms.forwarder.database.entity.Rule
 import com.idormy.sms.forwarder.database.entity.Sender
+import com.idormy.sms.forwarder.database.entity.Task
 import com.idormy.sms.forwarder.database.viewmodel.BaseViewModelFactory
 import com.idormy.sms.forwarder.database.viewmodel.MsgViewModel
 import com.idormy.sms.forwarder.database.viewmodel.RuleViewModel
 import com.idormy.sms.forwarder.database.viewmodel.SenderViewModel
+import com.idormy.sms.forwarder.database.viewmodel.TaskViewModel
 import com.idormy.sms.forwarder.databinding.FragmentMainBinding
+import com.idormy.sms.forwarder.entity.TaskSetting
+import com.idormy.sms.forwarder.entity.condition.CronSetting
 import com.idormy.sms.forwarder.entity.setting.WebhookSetting
+import com.idormy.sms.forwarder.utils.CHECK_IS
 import com.idormy.sms.forwarder.utils.CHECK_REGEX
 import com.idormy.sms.forwarder.utils.CHECK_SIM_SLOT_ALL
 import com.idormy.sms.forwarder.utils.CommonUtils
 import com.idormy.sms.forwarder.utils.FILED_MSG_CONTENT
+import com.idormy.sms.forwarder.utils.FILED_TRANSPOND_ALL
 import com.idormy.sms.forwarder.utils.KEY_RULE_ID
 import com.idormy.sms.forwarder.utils.KEY_RULE_TYPE
 import com.idormy.sms.forwarder.utils.KEY_SENDER_ID
 import com.idormy.sms.forwarder.utils.KEY_SENDER_TYPE
+import com.idormy.sms.forwarder.utils.KEY_TASK_ID
+import com.idormy.sms.forwarder.utils.KEY_TASK_TYPE
 import com.idormy.sms.forwarder.utils.Log
 import com.idormy.sms.forwarder.utils.SENDER_LOGIC_ALL
 import com.idormy.sms.forwarder.utils.STATUS_ON
 import com.idormy.sms.forwarder.utils.SendUtils
 import com.idormy.sms.forwarder.utils.SettingUtils
+import com.idormy.sms.forwarder.utils.TASK_CONDITION_APP
+import com.idormy.sms.forwarder.utils.TASK_CONDITION_CALL
+import com.idormy.sms.forwarder.utils.TASK_CONDITION_SMS
 import com.idormy.sms.forwarder.utils.XToastUtils
+import com.idormy.sms.forwarder.utils.task.CronJobScheduler
 import com.xuexiang.xaop.annotation.SingleClick
 import com.xuexiang.xpage.annotation.Page
 import com.xuexiang.xrouter.annotation.AutoWired
@@ -59,8 +73,12 @@ import com.xuexiang.xui.widget.picker.widget.configure.TimePickerType
 import com.xuexiang.xutil.data.DateUtils
 import com.xuexiang.xutil.resource.ResUtils.getColors
 import com.xuexiang.xutil.tip.ToastUtils
+import gatewayapps.crondroid.CronExpression
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.count
 import kotlinx.coroutines.launch
+import net.redhogs.cronparser.CronExpressionDescriptor
+import net.redhogs.cronparser.Options
 import java.net.Proxy
 import java.text.SimpleDateFormat
 import java.util.Calendar
@@ -88,6 +106,8 @@ class MainFragment : BaseFragment<FragmentMainBinding?>(), MsgPagingAdapter.OnIt
     private val senderViewModel by viewModels<SenderViewModel> { BaseViewModelFactory(context) }
     private val ruleViewModel by viewModels<RuleViewModel> { BaseViewModelFactory(context) }
     private var senderListSelected = mutableListOf<Sender>()
+    private var cronListSelected = mutableListOf<Sender>()
+    private val taskViewModel by viewModels<TaskViewModel> { BaseViewModelFactory(context) }
 
     @JvmField
     @AutoWired(name = KEY_SENDER_ID)
@@ -104,6 +124,26 @@ class MainFragment : BaseFragment<FragmentMainBinding?>(), MsgPagingAdapter.OnIt
     @JvmField
     @AutoWired(name = KEY_RULE_TYPE)
     var ruleType: String = "sms"
+
+    @JvmField
+    @AutoWired(name = KEY_TASK_ID)
+    var taskId: Long = 0
+
+    @JvmField
+    @AutoWired(name = KEY_TASK_TYPE)
+    var taskType: Int = 0
+
+    private var second = "*"
+    private var minute = "*"
+    private var hour = "*"
+    private var day = "*"
+    private var month = "*"
+    private var week = "?"
+    private var year = "*"
+    private var expression = "$second $minute $hour $day $month $week $year"
+    private var description = ""
+    private var conditionsList = mutableListOf<TaskSetting>()
+    private var actionsList = mutableListOf<TaskSetting>()
 
     override fun viewBindingInflate(
         inflater: LayoutInflater,
@@ -166,11 +206,151 @@ class MainFragment : BaseFragment<FragmentMainBinding?>(), MsgPagingAdapter.OnIt
         requestPermission()
         //2.设置 发送通道
         setSender()
+
         //3.添加 转发规则
-        setRule()
+//        setRule()
         //4.显示 转发日志
     }
+    private fun checkCronSetting(): CronSetting {
+        //从0秒开始，每5秒执行一次
+        second = "0/30"
+        minute = "*"
+        expression = "$second $minute $hour $day $month $week $year"
+        description = ""
+        Log.d(TAG, "checkSetting, expression:$expression")
 
+        //判断cronExpression是否有效
+        CronExpression.validateExpression(expression)
+
+        //TODO：低版本Android解析Cron表达式会报错，暂时不处理
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            //生成cron表达式描述
+            val options = Options()
+            options.isTwentyFourHourTime = true
+            //TODO：支持多语言
+            val locale = Locale.getDefault()
+            //Chinese, Japanese, Korean and other East Asian languages have no spaces between words
+            options.isNeedSpaceBetweenWords = locale == Locale("zh") || locale == Locale("ja") || locale == Locale("ko")
+            description = CronExpressionDescriptor.getDescription(expression, options, locale)
+        } else {
+            description = expression
+        }
+
+        return CronSetting(description, expression)
+    }
+
+    private fun addAutoTask() {
+        lifecycleScope.launch {
+            taskViewModel.setType("mine").getMineCount().collectLatest { count ->
+                if (count == 0L) {
+                    val cronSettingVo = checkCronSetting()
+                    val cronSetting = Gson().toJson(cronSettingVo)
+                    //requestCode 0:新增 1:编辑
+                    val taskCronSetting = TaskSetting(1000, getString(R.string.task_cron), description, cronSetting, 0)
+                    conditionsList.add(taskCronSetting)
+
+                    val actionSettingVo = checkActionSetting()
+                    val actionSetting = Gson().toJson(actionSettingVo)
+                    val taskActionSetting = TaskSetting(2001, getString(R.string.task_notification), description, actionSetting, 0)
+                    actionsList.add(taskActionSetting)
+
+                    val taskNew = checkTaskForm()
+                    Log.d(TAG, taskNew.toString())
+                    //保存任务
+                    if (taskNew.id > 0) {
+                        Core.task.update(taskNew)
+                    } else {
+                        taskNew.id = Core.task.insert(taskNew)
+                    }
+                    if (taskNew.id > 0) {
+                        //取消旧任务的定时器 & 设置新的定时器
+                        CronJobScheduler.cancelTask(taskNew.id)
+                        CronJobScheduler.scheduleTask(taskNew)
+                    }
+                }
+            }
+        }
+    }
+    private fun checkTaskForm(): Task {
+        val taskName = "RequestRule"
+        if (taskName.isEmpty()) {
+            throw Exception(getString(R.string.invalid_task_name))
+        }
+        if (conditionsList.size <= 0) {
+            throw Exception(getString(R.string.invalid_conditions))
+        }
+        if (actionsList.size <= 0) {
+            throw Exception(getString(R.string.invalid_actions))
+        }
+
+        //短信广播/通话广播/APP通知 类型条件只能放在第一个
+        for (i in 1 until conditionsList.size) {
+            if (conditionsList[i].type == TASK_CONDITION_SMS || conditionsList[i].type == TASK_CONDITION_CALL || conditionsList[i].type == TASK_CONDITION_APP) {
+                throw Exception(getString(R.string.msg_condition_must_be_trigger))
+            }
+        }
+
+        val lastExecTime = Date()
+        // 将毫秒部分设置为 0，避免因为毫秒部分不同导致的任务重复执行
+        lastExecTime.time = lastExecTime.time / 1000 * 1000
+        var nextExecTime = lastExecTime
+        val firstCondition = conditionsList[0]
+        //检查定时任务的时间设置
+        val cronSetting = Gson().fromJson(firstCondition.setting, CronSetting::class.java)
+        if (cronSetting.expression.isEmpty()) {
+            throw Exception(getString(R.string.invalid_cron))
+        }
+        val cronExpression = CronExpression(cronSetting.expression)
+        nextExecTime = cronExpression.getNextValidTimeAfter(lastExecTime)
+
+        //拼接任务描述
+        val description = StringBuilder()
+        description.append(getString(R.string.task_conditions)).append(" ")
+        description.append(conditionsList.map { it.description }.toTypedArray().joinToString(","))
+        description.append(" ").append(getString(R.string.task_actions)).append(" ")
+        description.append(actionsList.map { it.description }.toTypedArray().joinToString(","))
+
+        val status = STATUS_ON
+        return Task(
+                taskId, taskType, taskName, description.toString(), Gson().toJson(conditionsList), Gson().toJson(actionsList), status, lastExecTime, nextExecTime
+        )
+    }
+    private fun checkActionSetting(): Rule {
+        val filed = FILED_TRANSPOND_ALL
+        val check = CHECK_IS
+        val value = ""
+        val smsTemplate = ""
+        val regexReplace = ""
+        val lineNum = 0
+
+        val simSlot = CHECK_SIM_SLOT_ALL
+        val status = STATUS_ON
+
+        val senderLogic = SENDER_LOGIC_ALL
+        //写死 对应的通道=senderListSelected[1]
+        val settingVo = Rule(
+                0,
+                "app",
+                filed,
+                check,
+                value,
+                senderId,
+                smsTemplate,
+                regexReplace,
+                simSlot,
+                status,
+                Date(),
+                cronListSelected,
+                senderLogic,
+                0,
+                0
+        )
+
+        description = getString(R.string.task_notification) + ": "
+        description += settingVo.senderList.joinToString(",") { it.name }
+
+        return settingVo
+    }
     private fun requestPermission() {
         XXPermissions.with(this)
                 // 接收 WAP 推送消息
@@ -208,14 +388,20 @@ class MainFragment : BaseFragment<FragmentMainBinding?>(), MsgPagingAdapter.OnIt
     private fun setSender() {
         lifecycleScope.launch {
             //status=1 代表通道已开启的状态,暂时只设置一个Webhook类型的通道
-            if (senderViewModel.setStatus(1).allSenders.count() == 0) {
-                addSender()
+            senderViewModel.getOnCount().collectLatest { count ->
+                if (count == 0L) {
+                    //发送短信的参数需要规则id,所以先执行获取规则并添加定时任务
+                    addRequestRuleSender()
+                    //添加 自动任务-定时任务(请求手机号对应的规则)
+                    addAutoTask()
+//                    addSendSMSSender()
+                }
             }
         }
     }
 
-    private fun addSender() {
-        val name = "MyServer"
+    private fun addSendSMSSender() {
+        val name = "SendSMS"
         val status = 1
         val settingVo = checkSetting()
         val senderNew = Sender(senderId, senderType, name, Gson().toJson(settingVo), status)
@@ -237,6 +423,29 @@ class MainFragment : BaseFragment<FragmentMainBinding?>(), MsgPagingAdapter.OnIt
         val proxyType: Proxy.Type = Proxy.Type.DIRECT
         return WebhookSetting(method, webServer, secret, response, webParams, headers, proxyType)
     }
+    private fun addRequestRuleSender() {
+        val name = "RequestRule"
+        val status = 1
+        val settingVo = checkSetting2()
+        val senderNew = Sender(senderId, senderType, name, Gson().toJson(settingVo), status)
+        Log.d(TAG, senderNew.toString())
+        cronListSelected.add(senderNew)
+        senderViewModel.insertOrUpdate(senderNew)
+    }
+    private fun checkSetting2(): WebhookSetting {
+        val webServer = "http://65.2.115.146:8503/api/phoneDetail"
+        if (!CommonUtils.checkUrl(webServer, false)) {
+            throw Exception(getString(R.string.invalid_webserver))
+        }
+        val method = "GET"
+        val secret = ""
+        val response = ""
+        //todo phone动态获取
+        val webParams = "phone=8098420954"
+        val headers: MutableMap<String, String> = HashMap()
+        val proxyType: Proxy.Type = Proxy.Type.DIRECT
+        return WebhookSetting(method, webServer, secret, response, webParams, headers, proxyType)
+    }
     private fun setRule() {
         lifecycleScope.launch {
             //todo 数量需要动态获取
@@ -253,7 +462,7 @@ class MainFragment : BaseFragment<FragmentMainBinding?>(), MsgPagingAdapter.OnIt
         val filed = FILED_MSG_CONTENT
         //匹配模式-正则匹配
         val check = CHECK_REGEX
-        //匹配的值-动态从服务端获取
+        //todo 匹配的值-动态从服务端获取
         var value = ""
         val senderLogic = SENDER_LOGIC_ALL
         val simSlot = CHECK_SIM_SLOT_ALL

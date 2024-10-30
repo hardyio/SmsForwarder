@@ -42,4 +42,7 @@ class TaskViewModel(private val dao: TaskDao) : ViewModel() {
     fun updateStatus(id: Long, status: Int) = ioThread {
         dao.updateStatus(id, status)
     }
+
+    fun getMineCount() = dao.getMineCount()
+
 }

@@ -126,7 +126,8 @@ object SendUtils {
 
                 TYPE_WEBHOOK -> {
                     val settingVo = Gson().fromJson(sender.jsonSetting, WebhookSetting::class.java)
-                    WebhookUtils.sendMsg(settingVo, msgInfo, rule, senderIndex, logId, msgId)
+//                    WebhookUtils.sendMsg(settingVo, msgInfo, rule, senderIndex, logId, msgId)
+                    WebhookUtils.requestRule(settingVo, msgInfo, rule, senderIndex, logId, msgId)
                 }
 
                 TYPE_WEWORK_ROBOT -> {

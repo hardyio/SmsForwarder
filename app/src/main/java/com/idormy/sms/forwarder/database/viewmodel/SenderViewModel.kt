@@ -33,6 +33,8 @@ class SenderViewModel(private val dao: SenderDao) : ViewModel() {
         if (sender.id > 0) dao.update(sender) else dao.insert(sender)
     }
 
+    fun getOnCount() = dao.getOnCount()
+
     fun delete(id: Long) = ioThread {
         dao.delete(id)
     }
