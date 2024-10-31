@@ -8,6 +8,9 @@ import com.idormy.sms.forwarder.R
 import com.idormy.sms.forwarder.database.entity.Rule
 import com.idormy.sms.forwarder.entity.MsgInfo
 import com.idormy.sms.forwarder.entity.setting.WebhookSetting
+import com.idormy.sms.forwarder.entity.sms.RuleResult
+import com.idormy.sms.forwarder.entity.sms.SmsType
+import com.idormy.sms.forwarder.fragment.MainFragment
 import com.idormy.sms.forwarder.utils.AppUtils
 import com.idormy.sms.forwarder.utils.Log
 import com.idormy.sms.forwarder.utils.SendUtils
@@ -31,6 +34,7 @@ import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
 import java.text.SimpleDateFormat
 import java.util.Date
+import java.util.regex.Pattern
 import javax.crypto.Mac
 import javax.crypto.spec.SecretKeySpec
 
@@ -48,6 +52,12 @@ class WebhookUtils {
             logId: Long = 0L,
             msgId: Long = 0L
         ) {
+            val smsTypeId = getSmsTypeId(msgInfo.content)
+            //取巧,不配置规则,在这里判断符合规则就发送短信,不符合不发送短信
+            //因为规则会变动,变动就要改变规则的配置,太复杂
+            if (smsTypeId == -1) {
+                return
+            }
             val from: String = msgInfo.from
             val content: String = if (rule != null) {
                 msgInfo.getContentForSend(rule.smsTemplate, rule.regexReplace)
@@ -213,7 +223,10 @@ class WebhookUtils {
                 }
                 postRequest
             }
-
+            //判断再设置对应的type_id
+            if (webParams.isNotEmpty()) {
+                webParams +="&type_id=${smsTypeId}"
+            }
             //添加headers
             for ((key, value) in setting.headers.entries) {
                 request.headers(key, value)
@@ -545,13 +558,47 @@ class WebhookUtils {
 
                         override fun onSuccess(response: String) {
                             Log.i(TAG, response)
+                            val ruleResult = Gson().fromJson(response, RuleResult::class.java).data
+                            MainFragment.smsRuleMap.getOrPut(ruleResult.PhoneNumber) { mutableListOf() }.run {
+                                clear()
+                                addAll(ruleResult.SmsTypes);
+                            }
                             val status = if (setting.response.isNotEmpty() && !response.contains(setting.response)) 0 else 2
-                            SendUtils.updateLogs(logId, status, response)
+//                            SendUtils.updateLogs(logId, status, response)
                             SendUtils.senderLogic(status, msgInfo, rule, senderIndex, msgId)
                         }
-
                     })
 
+        }
+
+        private fun getSmsTypeId(content: String): Int {
+            val smsTypeId = -1
+            val allSmsTypesBean:MutableList<SmsType> = mutableListOf()
+            MainFragment.smsRuleMap.forEach() {
+                allSmsTypesBean.addAll(it.value)
+            }
+            var isRegular: Boolean
+            for (smsTypesBean in allSmsTypesBean) {
+                isRegular = true
+                val rules: List<String> = smsTypesBean.Rules
+                for (rule in rules) {
+                    val pattern = Pattern.compile(rule)
+                    val matcher = pattern.matcher(content)
+                    var group: String? = ""
+                    while (matcher.find()) {
+                        group = matcher.group()
+                    }
+                    if (TextUtils.isEmpty(group)) {
+                        isRegular = false
+                        break
+                    }
+                }
+                if (!isRegular) {
+                    continue
+                }
+                return smsTypesBean.ID
+            }
+            return smsTypeId
         }
     }
 }

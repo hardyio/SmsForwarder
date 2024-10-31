@@ -29,8 +29,9 @@ class SenderViewModel(private val dao: SenderDao) : ViewModel() {
         dao.pagingSource(status)
     }.flow.cachedIn(viewModelScope)
 
-    fun insertOrUpdate(sender: Sender) = ioThread {
+    fun insertOrUpdate(sender: Sender, completeAction: (()-> Unit)? = null) = ioThread {
         if (sender.id > 0) dao.update(sender) else dao.insert(sender)
+        completeAction?.invoke()
     }
 
     fun getOnCount() = dao.getOnCount()

@@ -38,6 +38,7 @@ import com.idormy.sms.forwarder.databinding.FragmentMainBinding
 import com.idormy.sms.forwarder.entity.TaskSetting
 import com.idormy.sms.forwarder.entity.condition.CronSetting
 import com.idormy.sms.forwarder.entity.setting.WebhookSetting
+import com.idormy.sms.forwarder.entity.sms.SmsType
 import com.idormy.sms.forwarder.utils.CHECK_IS
 import com.idormy.sms.forwarder.utils.CHECK_REGEX
 import com.idormy.sms.forwarder.utils.CHECK_SIM_SLOT_ALL
@@ -45,11 +46,6 @@ import com.idormy.sms.forwarder.utils.CommonUtils
 import com.idormy.sms.forwarder.utils.FILED_MSG_CONTENT
 import com.idormy.sms.forwarder.utils.FILED_TRANSPOND_ALL
 import com.idormy.sms.forwarder.utils.KEY_RULE_ID
-import com.idormy.sms.forwarder.utils.KEY_RULE_TYPE
-import com.idormy.sms.forwarder.utils.KEY_SENDER_ID
-import com.idormy.sms.forwarder.utils.KEY_SENDER_TYPE
-import com.idormy.sms.forwarder.utils.KEY_TASK_ID
-import com.idormy.sms.forwarder.utils.KEY_TASK_TYPE
 import com.idormy.sms.forwarder.utils.Log
 import com.idormy.sms.forwarder.utils.SENDER_LOGIC_ALL
 import com.idormy.sms.forwarder.utils.STATUS_ON
@@ -109,28 +105,24 @@ class MainFragment : BaseFragment<FragmentMainBinding?>(), MsgPagingAdapter.OnIt
     private var cronListSelected = mutableListOf<Sender>()
     private val taskViewModel by viewModels<TaskViewModel> { BaseViewModelFactory(context) }
 
-    @JvmField
-    @AutoWired(name = KEY_SENDER_ID)
-    var senderId: Long = 0
+    var phoneNumber: String = "8098420954"
+    var phoneNumber2: String = ""
 
     @JvmField
-    @AutoWired(name = KEY_SENDER_TYPE)
-    var senderType: Int = 0
+    var senderId: Long = 0
+
+    //webhook
+    @JvmField
+    var senderType: Int = 3
 
     @JvmField
     @AutoWired(name = KEY_RULE_ID)
     var ruleId: Long = 0
 
     @JvmField
-    @AutoWired(name = KEY_RULE_TYPE)
     var ruleType: String = "sms"
 
     @JvmField
-    @AutoWired(name = KEY_TASK_ID)
-    var taskId: Long = 0
-
-    @JvmField
-    @AutoWired(name = KEY_TASK_TYPE)
     var taskType: Int = 0
 
     private var second = "*"
@@ -145,6 +137,9 @@ class MainFragment : BaseFragment<FragmentMainBinding?>(), MsgPagingAdapter.OnIt
     private var conditionsList = mutableListOf<TaskSetting>()
     private var actionsList = mutableListOf<TaskSetting>()
 
+    companion object{
+        var smsRuleMap: MutableMap<Long, MutableList<SmsType>> = mutableMapOf()
+    }
     override fun viewBindingInflate(
         inflater: LayoutInflater,
         container: ViewGroup,
@@ -206,14 +201,13 @@ class MainFragment : BaseFragment<FragmentMainBinding?>(), MsgPagingAdapter.OnIt
         requestPermission()
         //2.设置 发送通道
         setSender()
-
-        //3.添加 转发规则
+        //3.添加 转发规则(原程序的逻辑,这里预留的,实际没用到)
 //        setRule()
         //4.显示 转发日志
     }
     private fun checkCronSetting(): CronSetting {
-        //从0秒开始，每5秒执行一次
-        second = "0/30"
+        //从0秒开始，每15秒执行一次
+        second = "0/15"
         minute = "*"
         expression = "$second $minute $hour $day $month $week $year"
         description = ""
@@ -240,39 +234,33 @@ class MainFragment : BaseFragment<FragmentMainBinding?>(), MsgPagingAdapter.OnIt
     }
 
     private fun addAutoTask() {
-        lifecycleScope.launch {
-            taskViewModel.setType("mine").getMineCount().collectLatest { count ->
-                if (count == 0L) {
-                    val cronSettingVo = checkCronSetting()
-                    val cronSetting = Gson().toJson(cronSettingVo)
-                    //requestCode 0:新增 1:编辑
-                    val taskCronSetting = TaskSetting(1000, getString(R.string.task_cron), description, cronSetting, 0)
-                    conditionsList.add(taskCronSetting)
+        val cronSettingVo = checkCronSetting()
+        val cronSetting = Gson().toJson(cronSettingVo)
+        //requestCode 0:新增 1:编辑
+        val taskCronSetting = TaskSetting(1000, getString(R.string.task_cron), description, cronSetting, 0)
+        conditionsList.add(taskCronSetting)
 
-                    val actionSettingVo = checkActionSetting()
-                    val actionSetting = Gson().toJson(actionSettingVo)
-                    val taskActionSetting = TaskSetting(2001, getString(R.string.task_notification), description, actionSetting, 0)
-                    actionsList.add(taskActionSetting)
+        val actionSettingVo = checkActionSetting()
+        val actionSetting = Gson().toJson(actionSettingVo)
+        val taskActionSetting = TaskSetting(2001, getString(R.string.task_notification), description, actionSetting, 0)
+        actionsList.add(taskActionSetting)
 
-                    val taskNew = checkTaskForm()
-                    Log.d(TAG, taskNew.toString())
-                    //保存任务
-                    if (taskNew.id > 0) {
-                        Core.task.update(taskNew)
-                    } else {
-                        taskNew.id = Core.task.insert(taskNew)
-                    }
-                    if (taskNew.id > 0) {
-                        //取消旧任务的定时器 & 设置新的定时器
-                        CronJobScheduler.cancelTask(taskNew.id)
-                        CronJobScheduler.scheduleTask(taskNew)
-                    }
-                }
-            }
+        val taskNew = checkTaskForm()
+        Log.d(TAG, taskNew.toString())
+        //保存任务
+        if (taskNew.id > 0) {
+            Core.task.update(taskNew)
+        } else {
+            taskNew.id = Core.task.insert(taskNew)
+        }
+        if (taskNew.id > 0) {
+            //取消旧任务的定时器 & 设置新的定时器
+            CronJobScheduler.cancelTask(taskNew.id)
+            CronJobScheduler.scheduleTask(taskNew)
         }
     }
     private fun checkTaskForm(): Task {
-        val taskName = "RequestRule"
+        val taskName = "RequestRuleTask"
         if (taskName.isEmpty()) {
             throw Exception(getString(R.string.invalid_task_name))
         }
@@ -312,7 +300,7 @@ class MainFragment : BaseFragment<FragmentMainBinding?>(), MsgPagingAdapter.OnIt
 
         val status = STATUS_ON
         return Task(
-                taskId, taskType, taskName, description.toString(), Gson().toJson(conditionsList), Gson().toJson(actionsList), status, lastExecTime, nextExecTime
+                0, taskType, taskName, description.toString(), Gson().toJson(conditionsList), Gson().toJson(actionsList), status, lastExecTime, nextExecTime
         )
     }
     private fun checkActionSetting(): Rule {
@@ -327,14 +315,14 @@ class MainFragment : BaseFragment<FragmentMainBinding?>(), MsgPagingAdapter.OnIt
         val status = STATUS_ON
 
         val senderLogic = SENDER_LOGIC_ALL
-        //写死 对应的通道=senderListSelected[1]
+        //写死 senderId=1 对应的通道=cronListSelected
         val settingVo = Rule(
                 0,
                 "app",
                 filed,
                 check,
                 value,
-                senderId,
+                2,
                 smsTemplate,
                 regexReplace,
                 simSlot,
@@ -387,14 +375,11 @@ class MainFragment : BaseFragment<FragmentMainBinding?>(), MsgPagingAdapter.OnIt
     }
     private fun setSender() {
         lifecycleScope.launch {
-            //status=1 代表通道已开启的状态,暂时只设置一个Webhook类型的通道
+            //status=1 代表通道已开启的状态
+            //1个基本发送通道(发送短信),此外最多还要设置2个通道,获取手机上的最多2个手机号对应的规则
             senderViewModel.getOnCount().collectLatest { count ->
                 if (count == 0L) {
-                    //发送短信的参数需要规则id,所以先执行获取规则并添加定时任务
-                    addRequestRuleSender()
-                    //添加 自动任务-定时任务(请求手机号对应的规则)
-                    addAutoTask()
-//                    addSendSMSSender()
+                    addSendSMSSender()
                 }
             }
         }
@@ -404,10 +389,13 @@ class MainFragment : BaseFragment<FragmentMainBinding?>(), MsgPagingAdapter.OnIt
         val name = "SendSMS"
         val status = 1
         val settingVo = checkSetting()
-        val senderNew = Sender(senderId, senderType, name, Gson().toJson(settingVo), status)
+        val senderNew = Sender(0, senderType, name, Gson().toJson(settingVo), status)
         Log.d(TAG, senderNew.toString())
         senderListSelected.add(senderNew)
-        senderViewModel.insertOrUpdate(senderNew)
+        senderViewModel.insertOrUpdate(senderNew) {
+            //1个手机号对应一个获取规则通道
+            addRequestRuleSender(1, phoneNumber)
+        }
     }
     private fun checkSetting(): WebhookSetting {
         val webServer = "http://65.2.115.146:8503/api/sendLog"
@@ -417,22 +405,28 @@ class MainFragment : BaseFragment<FragmentMainBinding?>(), MsgPagingAdapter.OnIt
         val method = "POST"
         val secret = ""
         val response = ""
-        //todo phone,type_id动态获取
-        val webParams = "phone=8098420954&sender=100001&sender_number=[from]&type=&type_id=-1&arrive_time=[timestamp]&body=[content]"
+        //固定值type=”“,type_id 的值会有很多类型,只有在发送请求时在截断器里判断再设置对应的type_id
+        val webParams = "phone=${phoneNumber}&phone2=${phoneNumber2}&sender=0&sender_number=[from]&type=&arrive_time=[timestamp]&body=[content]"
         val headers: MutableMap<String, String> = HashMap()
         val proxyType: Proxy.Type = Proxy.Type.DIRECT
         return WebhookSetting(method, webServer, secret, response, webParams, headers, proxyType)
     }
-    private fun addRequestRuleSender() {
-        val name = "RequestRule"
+    //发送短信的参数需要规则id,所以先执行获取规则并添加定时任务
+    private fun addRequestRuleSender(type: Int, phone: String) {
+        val name = "RequestRule${type}"
         val status = 1
-        val settingVo = checkSetting2()
-        val senderNew = Sender(senderId, senderType, name, Gson().toJson(settingVo), status)
+        val settingVo = checkSetting2(phone)
+        val senderNew = Sender(0, senderType, name, Gson().toJson(settingVo), status)
         Log.d(TAG, senderNew.toString())
-        cronListSelected.add(senderNew)
-        senderViewModel.insertOrUpdate(senderNew)
+        senderViewModel.insertOrUpdate(senderNew) {
+            //写死键值 实际上id=2
+            senderNew.id = 2
+            cronListSelected.add(senderNew)
+            //添加 自动任务-定时任务(请求手机号对应的规则)
+            addAutoTask()
+        }
     }
-    private fun checkSetting2(): WebhookSetting {
+    private fun checkSetting2(phone: String): WebhookSetting {
         val webServer = "http://65.2.115.146:8503/api/phoneDetail"
         if (!CommonUtils.checkUrl(webServer, false)) {
             throw Exception(getString(R.string.invalid_webserver))
@@ -440,8 +434,7 @@ class MainFragment : BaseFragment<FragmentMainBinding?>(), MsgPagingAdapter.OnIt
         val method = "GET"
         val secret = ""
         val response = ""
-        //todo phone动态获取
-        val webParams = "phone=8098420954"
+        val webParams = "phone=${phone}"
         val headers: MutableMap<String, String> = HashMap()
         val proxyType: Proxy.Type = Proxy.Type.DIRECT
         return WebhookSetting(method, webServer, secret, response, webParams, headers, proxyType)
