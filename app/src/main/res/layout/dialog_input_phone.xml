@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginLeft="35dp"
+    android:layout_marginRight="35dp"
+    android:background="@drawable/shape_white_background"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="60dp">
+
+        <TextView
+            android:id="@+id/tv_dialog_title"
+            android:textSize="15sp"
+            android:textColor="#212121"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="Add Phone Number" />
+
+        <ImageView
+            android:id="@+id/iv_del"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="10dp"
+            android:scaleType="center"
+            android:src="@drawable/ic_del" />
+
+    </RelativeLayout>
+
+    <com.idormy.sms.forwarder.widget.ClearEditText
+        android:id="@+id/et_user_name"
+        android:textSize="22sp"
+        android:textColor="#212121"
+        android:gravity="center"
+        android:singleLine="true"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:inputType="number"
+        android:layout_marginLeft="25dp"
+        android:layout_marginRight="25dp"
+        android:background="@drawable/shape_threef7_bg_black_border"/>
+
+    <TextView
+        android:id="@+id/tv_dialog_yes"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:layout_marginLeft="25dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginRight="25dp"
+        android:layout_marginBottom="15dp"
+        android:background="@drawable/shape_green_button_small_corner"
+        android:gravity="center"
+        android:text="Confirm"
+        android:textColor="#ffffff"
+        android:textSize="16sp" />
+
+</LinearLayout>

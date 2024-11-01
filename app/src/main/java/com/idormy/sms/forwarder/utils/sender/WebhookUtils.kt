@@ -56,6 +56,7 @@ class WebhookUtils {
             //取巧,不配置规则,在这里判断符合规则就发送短信,不符合不发送短信
             //因为规则会变动,变动就要改变规则的配置,太复杂
             if (smsTypeId == -1) {
+                Log.i(TAG, "不匹配,不执行\n${msgInfo.content}")
                 return
             }
             val from: String = msgInfo.from

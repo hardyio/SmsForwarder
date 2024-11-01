@@ -353,6 +353,7 @@ dependencies {
 
     //侧边栏菜单：https://github.com/yarolegovich/SlidingRootNav
     implementation 'com.yarolegovich:sliding-root-nav:1.1.1'
+    implementation "com.github.goweii:Layer:1.0.6"
 }
 //自动添加X-Library依赖
 apply from: 'x-library.gradle'

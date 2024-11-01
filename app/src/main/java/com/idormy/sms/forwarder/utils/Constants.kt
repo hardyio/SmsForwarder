@@ -316,3 +316,6 @@ val TAG_LIST = arrayOf(
     mapOf("zh_CN" to "{{充电方式}}", "zh_TW" to "{{充電方式}}", "en" to "{{BATTERY_PLUGGED}}"),
     mapOf("zh_CN" to "{{电池信息}}", "zh_TW" to "{{電池信息}}", "en" to "{{BATTERY_INFO}}")
 )
+
+const val PHONE1 = "Phone1"
+const val PHONE2 = "Phone2"

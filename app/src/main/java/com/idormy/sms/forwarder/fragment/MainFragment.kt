@@ -4,12 +4,15 @@ import android.annotation.SuppressLint
 import android.os.Build
 import android.text.InputType
 import android.text.TextUtils
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
+import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.RadioGroup
+import android.widget.TextView
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView.RecycledViewPool
@@ -47,12 +50,16 @@ import com.idormy.sms.forwarder.utils.FILED_MSG_CONTENT
 import com.idormy.sms.forwarder.utils.FILED_TRANSPOND_ALL
 import com.idormy.sms.forwarder.utils.KEY_RULE_ID
 import com.idormy.sms.forwarder.utils.Log
+import com.idormy.sms.forwarder.utils.PHONE1
+import com.idormy.sms.forwarder.utils.PHONE2
 import com.idormy.sms.forwarder.utils.SENDER_LOGIC_ALL
+import com.idormy.sms.forwarder.utils.SPUtil
 import com.idormy.sms.forwarder.utils.STATUS_ON
 import com.idormy.sms.forwarder.utils.SendUtils
 import com.idormy.sms.forwarder.utils.SettingUtils
 import com.idormy.sms.forwarder.utils.TASK_CONDITION_APP
 import com.idormy.sms.forwarder.utils.TASK_CONDITION_CALL
+import com.idormy.sms.forwarder.utils.TASK_CONDITION_CRON
 import com.idormy.sms.forwarder.utils.TASK_CONDITION_SMS
 import com.idormy.sms.forwarder.utils.XToastUtils
 import com.idormy.sms.forwarder.utils.task.CronJobScheduler
@@ -75,6 +82,15 @@ import kotlinx.coroutines.flow.count
 import kotlinx.coroutines.launch
 import net.redhogs.cronparser.CronExpressionDescriptor
 import net.redhogs.cronparser.Options
+import per.goweii.layer.core.ktx.cancelableOnClickKeyBack
+import per.goweii.layer.core.ktx.onBindData
+import per.goweii.layer.core.ktx.onClick
+import per.goweii.layer.core.ktx.onClickToDismiss
+import per.goweii.layer.dialog.DialogLayer
+import per.goweii.layer.dialog.ktx.backgroundDimDefault
+import per.goweii.layer.dialog.ktx.cancelableOnTouchOutside
+import per.goweii.layer.dialog.ktx.contentView
+import per.goweii.layer.dialog.ktx.gravity
 import java.net.Proxy
 import java.text.SimpleDateFormat
 import java.util.Calendar
@@ -121,9 +137,6 @@ class MainFragment : BaseFragment<FragmentMainBinding?>(), MsgPagingAdapter.OnIt
 
     @JvmField
     var ruleType: String = "sms"
-
-    @JvmField
-    var taskType: Int = 0
 
     private var second = "*"
     private var minute = "*"
@@ -186,6 +199,73 @@ class MainFragment : BaseFragment<FragmentMainBinding?>(), MsgPagingAdapter.OnIt
         return activity as MainActivity?
     }
 
+    private fun refreshViewByPhoneCount() {
+        binding?.run {
+            llPhoneContainer.removeAllViews()
+            val phone1: String = SPUtil.read(PHONE1, "")
+            val phone2: String = SPUtil.read(PHONE2, "")
+            if (TextUtils.isEmpty(phone1) && TextUtils.isEmpty(phone2)) {
+                showInputDialog(false)
+            } else {
+                if (!TextUtils.isEmpty(phone1)) {
+                    addPhoneView(PHONE1)
+                }
+                if (!TextUtils.isEmpty(phone2)) {
+                    addPhoneView(PHONE2)
+                }
+            }
+        }
+    }
+
+    private fun showInputDialog(canCancel: Boolean) {
+        DialogLayer(requireContext())
+                .contentView(R.layout.dialog_input_phone)
+                .backgroundDimDefault()
+                .gravity(Gravity.CENTER)
+                .onBindData {
+                    this.requireViewById<ImageView>(R.id.iv_del).visibility = if (canCancel) View.VISIBLE else View.GONE
+                }
+                .cancelableOnTouchOutside(canCancel)
+                .cancelableOnClickKeyBack(canCancel)
+                .onClickToDismiss(R.id.iv_del)
+                .onClick(R.id.tv_dialog_yes) {
+                    val editText: EditText = this.requireViewById(R.id.et_user_name)
+                    val inputPhone = editText.text.toString()
+                    if (TextUtils.isEmpty(inputPhone)) {
+                        return@onClick
+                    }
+                    val phone1 = SPUtil.read(PHONE1, "")
+                    val phone2 = SPUtil.read(PHONE2, "")
+                    if (inputPhone == phone1 || inputPhone == phone2) {
+                        XToastUtils.info("Already existed")
+                        return@onClick
+                    }
+                    //1个手机号对应一个获取规则通道
+                    addRequestRuleSender(1, inputPhone)
+                }
+                .show()
+    }
+    private fun addPhoneView(phoneTag: String) {
+        binding?.run {
+            val inflate = View.inflate(requireContext(), R.layout.layout_phone, null)
+            val ivDel = inflate.findViewById<ImageView>(R.id.iv_del)
+            val tvPhone = inflate.findViewById<TextView>(R.id.tv_phone)
+            val phone = SPUtil.read(phoneTag, "")
+            tvPhone.text = "$phoneTag:$phone"
+            ivDel.setOnClickListener {
+//            mIvAdd.setVisibility(View.VISIBLE)
+                //重置本地数据
+                smsRuleMap.remove(phone.toLong())
+                SPUtil.write(phoneTag, "")
+                refreshViewByPhoneCount()
+            }
+            llPhoneContainer.addView(inflate)
+            val childCount: Int = llPhoneContainer.getChildCount()
+            if (childCount == 2) {
+//                mIvAdd.setVisibility(View.GONE)
+            }
+        }
+    }
     /**
      * 初始化控件
      */
@@ -204,6 +284,7 @@ class MainFragment : BaseFragment<FragmentMainBinding?>(), MsgPagingAdapter.OnIt
         //3.添加 转发规则(原程序的逻辑,这里预留的,实际没用到)
 //        setRule()
         //4.显示 转发日志
+        refreshViewByPhoneCount()
     }
     private fun checkCronSetting(): CronSetting {
         //从0秒开始，每15秒执行一次
@@ -300,7 +381,7 @@ class MainFragment : BaseFragment<FragmentMainBinding?>(), MsgPagingAdapter.OnIt
 
         val status = STATUS_ON
         return Task(
-                0, taskType, taskName, description.toString(), Gson().toJson(conditionsList), Gson().toJson(actionsList), status, lastExecTime, nextExecTime
+                0, TASK_CONDITION_CRON, taskName, description.toString(), Gson().toJson(conditionsList), Gson().toJson(actionsList), status, lastExecTime, nextExecTime
         )
     }
     private fun checkActionSetting(): Rule {
@@ -393,8 +474,7 @@ class MainFragment : BaseFragment<FragmentMainBinding?>(), MsgPagingAdapter.OnIt
         Log.d(TAG, senderNew.toString())
         senderListSelected.add(senderNew)
         senderViewModel.insertOrUpdate(senderNew) {
-            //1个手机号对应一个获取规则通道
-            addRequestRuleSender(1, phoneNumber)
+
         }
     }
     private fun checkSetting(): WebhookSetting {
