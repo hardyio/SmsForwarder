@@ -33,6 +33,7 @@ import com.idormy.sms.forwarder.database.entity.Rule
 import com.idormy.sms.forwarder.database.entity.Sender
 import com.idormy.sms.forwarder.database.entity.Task
 import com.idormy.sms.forwarder.database.viewmodel.BaseViewModelFactory
+import com.idormy.sms.forwarder.database.viewmodel.MainViewModel
 import com.idormy.sms.forwarder.database.viewmodel.MsgViewModel
 import com.idormy.sms.forwarder.database.viewmodel.RuleViewModel
 import com.idormy.sms.forwarder.database.viewmodel.SenderViewModel
@@ -115,6 +116,7 @@ class MainFragment : BaseFragment<FragmentMainBinding?>(), MsgPagingAdapter.OnIt
     private var logsFilterPopup: MaterialDialog? = null
     private var timePicker: TimePickerView? = null
 
+    private val mainViewModel by viewModels<MainViewModel> { BaseViewModelFactory(context) }
     private val senderViewModel by viewModels<SenderViewModel> { BaseViewModelFactory(context) }
     private val ruleViewModel by viewModels<RuleViewModel> { BaseViewModelFactory(context) }
     private var senderListSelected = mutableListOf<Sender>()
@@ -149,7 +151,7 @@ class MainFragment : BaseFragment<FragmentMainBinding?>(), MsgPagingAdapter.OnIt
     private var description = ""
     private var conditionsList = mutableListOf<TaskSetting>()
     private var actionsList = mutableListOf<TaskSetting>()
-
+    private var layer: DialogLayer? = null
     companion object{
         var smsRuleMap: MutableMap<Long, MutableList<SmsType>> = mutableMapOf()
     }
@@ -162,36 +164,16 @@ class MainFragment : BaseFragment<FragmentMainBinding?>(), MsgPagingAdapter.OnIt
 
     override fun initTitle(): TitleBar? {
         titleBar = super.initTitle()!!.setImmersive(false)
-        titleBar!!.setLeftImageResource(R.drawable.ic_action_menu)
         titleBar!!.setTitle(R.string.app_name)
-        titleBar!!.setLeftClickListener { getContainer()?.openMenu() }
-        titleBar!!.addAction(object : TitleBar.ImageAction(R.drawable.ic_delete) {
+        titleBar!!.disableLeftView()
+        val action = object : TitleBar.ImageAction(R.drawable.ic_add) {
             @SingleClick
             override fun performAction(view: View) {
-                MaterialDialog.Builder(requireContext())
-                    .content(if (currentFilter.isEmpty()) R.string.delete_type_log_tips else R.string.delete_filter_log_tips)
-                    .positiveText(R.string.lab_yes)
-                    .negativeText(R.string.lab_no)
-                    .onPositive { _: MaterialDialog?, _: DialogAction? ->
-                        try {
-                            Log.d(TAG, "deleteAll, currentType:$currentType, currentFilter:$currentFilter")
-                            viewModel.setType(currentType).setFilter(currentFilter).deleteAll()
-                            reloadData()
-                            XToastUtils.success(if (currentFilter.isEmpty()) R.string.delete_type_log_toast else R.string.delete_filter_log_toast)
-                        } catch (e: Exception) {
-                            e.message?.let { XToastUtils.error(it) }
-                        }
-                    }
-                    .show()
+                val canCancel: Boolean = (binding?.llPhoneContainer?.childCount ?: 0) > 0
+                showInputDialog(canCancel)
             }
-        })
-        titleBar!!.addAction(object : TitleBar.ImageAction(R.drawable.ic_filter) {
-            @SingleClick
-            override fun performAction(view: View) {
-                initLogsFilterDialog()
-                logsFilterPopup?.show()
-            }
-        })
+        }
+        titleBar!!.addAction(action)
         return titleBar
     }
 
@@ -218,7 +200,7 @@ class MainFragment : BaseFragment<FragmentMainBinding?>(), MsgPagingAdapter.OnIt
     }
 
     private fun showInputDialog(canCancel: Boolean) {
-        DialogLayer(requireContext())
+         layer = DialogLayer(requireContext())
                 .contentView(R.layout.dialog_input_phone)
                 .backgroundDimDefault()
                 .gravity(Gravity.CENTER)
@@ -240,10 +222,12 @@ class MainFragment : BaseFragment<FragmentMainBinding?>(), MsgPagingAdapter.OnIt
                         XToastUtils.info("Already existed")
                         return@onClick
                     }
-                    //1个手机号对应一个获取规则通道
-                    addRequestRuleSender(1, inputPhone)
+                    mainViewModel.requestRule(if (phone1.isEmpty()) PHONE1 else PHONE2, inputPhone) {
+                        layer?.dismiss()
+                        refreshViewByPhoneCount()
+                    }
                 }
-                .show()
+         layer?.show()
     }
     private fun addPhoneView(phoneTag: String) {
         binding?.run {
@@ -253,16 +237,23 @@ class MainFragment : BaseFragment<FragmentMainBinding?>(), MsgPagingAdapter.OnIt
             val phone = SPUtil.read(phoneTag, "")
             tvPhone.text = "$phoneTag:$phone"
             ivDel.setOnClickListener {
-//            mIvAdd.setVisibility(View.VISIBLE)
+                val action = object : TitleBar.ImageAction(R.drawable.ic_add) {
+                    @SingleClick
+                    override fun performAction(view: View) {
+                        val canCancel: Boolean = (binding?.llPhoneContainer?.childCount ?: 0) > 0
+                        showInputDialog(canCancel)
+                    }
+                }
+                titleBar!!.addAction(action)
                 //重置本地数据
                 smsRuleMap.remove(phone.toLong())
                 SPUtil.write(phoneTag, "")
                 refreshViewByPhoneCount()
             }
             llPhoneContainer.addView(inflate)
-            val childCount: Int = llPhoneContainer.getChildCount()
+            val childCount: Int = llPhoneContainer.childCount
             if (childCount == 2) {
-//                mIvAdd.setVisibility(View.GONE)
+                titleBar!!.removeAllActions()
             }
         }
     }
@@ -284,11 +275,12 @@ class MainFragment : BaseFragment<FragmentMainBinding?>(), MsgPagingAdapter.OnIt
         //3.添加 转发规则(原程序的逻辑,这里预留的,实际没用到)
 //        setRule()
         //4.显示 转发日志
+
         refreshViewByPhoneCount()
     }
     private fun checkCronSetting(): CronSetting {
-        //从0秒开始，每15秒执行一次
-        second = "0/15"
+        //从0秒开始，每60秒执行一次
+        second = "0/60"
         minute = "*"
         expression = "$second $minute $hour $day $month $week $year"
         description = ""
@@ -314,19 +306,21 @@ class MainFragment : BaseFragment<FragmentMainBinding?>(), MsgPagingAdapter.OnIt
         return CronSetting(description, expression)
     }
 
-    private fun addAutoTask() {
+    private fun addAutoTask(type: Int) {
         val cronSettingVo = checkCronSetting()
         val cronSetting = Gson().toJson(cronSettingVo)
         //requestCode 0:新增 1:编辑
         val taskCronSetting = TaskSetting(1000, getString(R.string.task_cron), description, cronSetting, 0)
+        conditionsList.clear()
         conditionsList.add(taskCronSetting)
 
-        val actionSettingVo = checkActionSetting()
+        val actionSettingVo = checkActionSetting(type)
         val actionSetting = Gson().toJson(actionSettingVo)
         val taskActionSetting = TaskSetting(2001, getString(R.string.task_notification), description, actionSetting, 0)
+        actionsList.clear()
         actionsList.add(taskActionSetting)
 
-        val taskNew = checkTaskForm()
+        val taskNew = checkTaskForm(type)
         Log.d(TAG, taskNew.toString())
         //保存任务
         if (taskNew.id > 0) {
@@ -338,10 +332,14 @@ class MainFragment : BaseFragment<FragmentMainBinding?>(), MsgPagingAdapter.OnIt
             //取消旧任务的定时器 & 设置新的定时器
             CronJobScheduler.cancelTask(taskNew.id)
             CronJobScheduler.scheduleTask(taskNew)
+
+            if (taskNew.id == 1L) {
+                addRequestRuleSender(2)
+            }
         }
     }
-    private fun checkTaskForm(): Task {
-        val taskName = "RequestRuleTask"
+    private fun checkTaskForm(type: Int): Task {
+        val taskName = if (type == 1) PHONE1 else PHONE2
         if (taskName.isEmpty()) {
             throw Exception(getString(R.string.invalid_task_name))
         }
@@ -384,7 +382,7 @@ class MainFragment : BaseFragment<FragmentMainBinding?>(), MsgPagingAdapter.OnIt
                 0, TASK_CONDITION_CRON, taskName, description.toString(), Gson().toJson(conditionsList), Gson().toJson(actionsList), status, lastExecTime, nextExecTime
         )
     }
-    private fun checkActionSetting(): Rule {
+    private fun checkActionSetting(type: Int): Rule {
         val filed = FILED_TRANSPOND_ALL
         val check = CHECK_IS
         val value = ""
@@ -403,7 +401,7 @@ class MainFragment : BaseFragment<FragmentMainBinding?>(), MsgPagingAdapter.OnIt
                 filed,
                 check,
                 value,
-                2,
+                (type + 1).toLong(),
                 smsTemplate,
                 regexReplace,
                 simSlot,
@@ -421,6 +419,7 @@ class MainFragment : BaseFragment<FragmentMainBinding?>(), MsgPagingAdapter.OnIt
         return settingVo
     }
     private fun requestPermission() {
+        SettingUtils.enableSms = true
         XXPermissions.with(this)
                 // 接收 WAP 推送消息
                 .permission(Permission.RECEIVE_WAP_PUSH)
@@ -457,9 +456,10 @@ class MainFragment : BaseFragment<FragmentMainBinding?>(), MsgPagingAdapter.OnIt
     private fun setSender() {
         lifecycleScope.launch {
             //status=1 代表通道已开启的状态
-            //1个基本发送通道(发送短信),此外最多还要设置2个通道,获取手机上的最多2个手机号对应的规则
+            //1个基本发送通道(发送短信),此外还要设置2个通道,获取手机上的最多2个手机号对应的规则
             senderViewModel.getOnCount().collectLatest { count ->
                 if (count == 0L) {
+                    println("add sender")
                     addSendSMSSender()
                 }
             }
@@ -472,41 +472,47 @@ class MainFragment : BaseFragment<FragmentMainBinding?>(), MsgPagingAdapter.OnIt
         val settingVo = checkSetting()
         val senderNew = Sender(0, senderType, name, Gson().toJson(settingVo), status)
         Log.d(TAG, senderNew.toString())
+        senderListSelected.clear()
         senderListSelected.add(senderNew)
         senderViewModel.insertOrUpdate(senderNew) {
-
+            //直接设置2个定时任务,获取2个手机号对应的规则
+            addRequestRuleSender(1)
         }
     }
     private fun checkSetting(): WebhookSetting {
-        val webServer = "http://65.2.115.146:8503/api/sendLog"
+//        val webServer = "http://65.2.115.146:8503/api/sendLog"
+        val webServer = "https://api.sl.willanddo.com/api/msg/pushMsg?token=fner7PMo0phEAXIgD2GsWU3NyKC4HqFY9QkL5V6dTbjulZ1cimBaRzwvxtOJS8"
         if (!CommonUtils.checkUrl(webServer, false)) {
             throw Exception(getString(R.string.invalid_webserver))
         }
         val method = "POST"
         val secret = ""
         val response = ""
-        //固定值type=”“,type_id 的值会有很多类型,只有在发送请求时在截断器里判断再设置对应的type_id
-        val webParams = "phone=${phoneNumber}&phone2=${phoneNumber2}&sender=0&sender_number=[from]&type=&arrive_time=[timestamp]&body=[content]"
+        //固定值type=”“,type_id 的值会有很多类型,在发送请求时在截断器里判断再设置对应的type_id更加方便快捷
+        //phone,phone2随时可以修改,所以它们的值也在发送请求时再设置
+        val webParams = "sender=0&sender_number=[from]&type=&arrive_time=[timestamp]&body=[content]"
         val headers: MutableMap<String, String> = HashMap()
         val proxyType: Proxy.Type = Proxy.Type.DIRECT
         return WebhookSetting(method, webServer, secret, response, webParams, headers, proxyType)
     }
     //发送短信的参数需要规则id,所以先执行获取规则并添加定时任务
-    private fun addRequestRuleSender(type: Int, phone: String) {
+    private fun addRequestRuleSender(type: Int) {
         val name = "RequestRule${type}"
         val status = 1
-        val settingVo = checkSetting2(phone)
+        val settingVo = checkSetting2()
         val senderNew = Sender(0, senderType, name, Gson().toJson(settingVo), status)
         Log.d(TAG, senderNew.toString())
         senderViewModel.insertOrUpdate(senderNew) {
-            //写死键值 实际上id=2
-            senderNew.id = 2
+            //写死键值 phone1/id=2,phone2/id=3
+            val id = type + 1
+            senderNew.id = id.toLong()
+            cronListSelected.clear()
             cronListSelected.add(senderNew)
             //添加 自动任务-定时任务(请求手机号对应的规则)
-            addAutoTask()
+            addAutoTask(type)
         }
     }
-    private fun checkSetting2(phone: String): WebhookSetting {
+    private fun checkSetting2(): WebhookSetting {
         val webServer = "http://65.2.115.146:8503/api/phoneDetail"
         if (!CommonUtils.checkUrl(webServer, false)) {
             throw Exception(getString(R.string.invalid_webserver))
@@ -514,14 +520,14 @@ class MainFragment : BaseFragment<FragmentMainBinding?>(), MsgPagingAdapter.OnIt
         val method = "GET"
         val secret = ""
         val response = ""
-        val webParams = "phone=${phone}"
+        val webParams = ""
         val headers: MutableMap<String, String> = HashMap()
         val proxyType: Proxy.Type = Proxy.Type.DIRECT
         return WebhookSetting(method, webServer, secret, response, webParams, headers, proxyType)
     }
     private fun setRule() {
         lifecycleScope.launch {
-            //todo 数量需要动态获取
+            //数量需要动态获取
             //currentType=sms
             if (ruleViewModel.setType(currentType).allRules.count() == 0) {
                 val ruleNew = checkForm()

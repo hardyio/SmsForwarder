@@ -47,6 +47,11 @@ class BaseViewModelFactory(private val context: Context?) : ViewModelProvider.Fa
                 @Suppress("UNCHECKED_CAST")
                 return TaskViewModel(taskDao) as T
             }
+
+            modelClass.isAssignableFrom(MainViewModel::class.java) -> {
+                @Suppress("UNCHECKED_CAST")
+                return MainViewModel() as T
+            }
         }
 
         throw IllegalArgumentException("Unknown ViewModel class")

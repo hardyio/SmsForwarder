@@ -84,6 +84,7 @@ class SendWorker(context: Context, params: WorkerParameters) : CoroutineWorker(c
 
                 val ruleList: List<Rule> = Core.rule.getRuleList(msgInfo.type, 1, simSlot)
                 if (ruleList.isEmpty()) {
+                    Log.e(TAG, "SendWorker failed: ruleList.isEmpty")
                     return@withContext Result.failure(workDataOf("send" to "failed"))
                 }
 
@@ -93,6 +94,7 @@ class SendWorker(context: Context, params: WorkerParameters) : CoroutineWorker(c
                     if (rule.checkMsg(msgInfo)) ruleListMatched.add(rule)
                 }
                 if (ruleListMatched.isEmpty()) {
+                    Log.e(TAG, "SendWorker failed: ruleListMatched.isEmpty")
                     return@withContext Result.failure(workDataOf("send" to "failed"))
                 }
 

@@ -13,8 +13,12 @@ import com.idormy.sms.forwarder.entity.sms.SmsType
 import com.idormy.sms.forwarder.fragment.MainFragment
 import com.idormy.sms.forwarder.utils.AppUtils
 import com.idormy.sms.forwarder.utils.Log
+import com.idormy.sms.forwarder.utils.PHONE1
+import com.idormy.sms.forwarder.utils.PHONE2
+import com.idormy.sms.forwarder.utils.SPUtil
 import com.idormy.sms.forwarder.utils.SendUtils
 import com.idormy.sms.forwarder.utils.SettingUtils
+import com.idormy.sms.forwarder.utils.XToastUtils
 import com.idormy.sms.forwarder.utils.interceptor.BasicAuthInterceptor
 import com.idormy.sms.forwarder.utils.interceptor.LoggingInterceptor
 import com.idormy.sms.forwarder.utils.interceptor.NoContentInterceptor
@@ -228,6 +232,10 @@ class WebhookUtils {
             if (webParams.isNotEmpty()) {
                 webParams +="&type_id=${smsTypeId}"
             }
+            val phone1: String = SPUtil.read(PHONE1, "")
+            webParams +="&phone=${phone1}"
+            val phone2: String = SPUtil.read(PHONE2, "")
+            webParams +="&phone2=${phone2}"
             //添加headers
             for ((key, value) in setting.headers.entries) {
                 request.headers(key, value)
@@ -326,6 +334,11 @@ class WebhookUtils {
                 logId: Long = 0L,
                 msgId: Long = 0L
         ) {
+            val phoneKey = msgInfo.simInfo
+            val phoneNumber = SPUtil.read(phoneKey, "")
+            if (phoneNumber.isEmpty()) {
+                return
+            }
             val from: String = msgInfo.from
             val content: String = if (rule != null) {
                 msgInfo.getContentForSend(rule.smsTemplate, rule.regexReplace)
@@ -356,8 +369,7 @@ class WebhookUtils {
                 val signData = mac.doFinal(stringToSign.toByteArray(StandardCharsets.UTF_8))
                 sign = URLEncoder.encode(String(Base64.encode(signData, Base64.NO_WRAP)), "UTF-8")
             }
-
-            var webParams = setting.webParams.trim()
+            var webParams = "phone=${phoneNumber}"
 
             //支持HTTP基本认证(Basic Authentication)
             val regex = "^(https?://)([^:]+):([^@]+)@(.+)"
@@ -553,20 +565,26 @@ class WebhookUtils {
                             //e.printStackTrace()
                             Log.e(TAG, e.detailMessage)
                             val status = if (setting.response.isNotEmpty() && e.detailMessage.contains(setting.response)) 2 else 0
-                            SendUtils.updateLogs(logId, status, e.displayMessage)
+//                            SendUtils.updateLogs(logId, status, e.displayMessage)
                             SendUtils.senderLogic(status, msgInfo, rule, senderIndex, msgId)
                         }
 
                         override fun onSuccess(response: String) {
                             Log.i(TAG, response)
-                            val ruleResult = Gson().fromJson(response, RuleResult::class.java).data
-                            MainFragment.smsRuleMap.getOrPut(ruleResult.PhoneNumber) { mutableListOf() }.run {
-                                clear()
-                                addAll(ruleResult.SmsTypes);
-                            }
-                            val status = if (setting.response.isNotEmpty() && !response.contains(setting.response)) 0 else 2
+                            val ruleResult = Gson().fromJson(response, RuleResult::class.java)
+                            if (ruleResult.code == 200) {
+                                val ruleResultData = ruleResult.data
+                                MainFragment.smsRuleMap.getOrPut(ruleResultData.PhoneNumber) { mutableListOf() }.run {
+                                    clear()
+                                    addAll(ruleResultData.SmsTypes);
+                                }
+
+                                val status = if (setting.response.isNotEmpty() && !response.contains(setting.response)) 0 else 2
 //                            SendUtils.updateLogs(logId, status, response)
-                            SendUtils.senderLogic(status, msgInfo, rule, senderIndex, msgId)
+                                SendUtils.senderLogic(status, msgInfo, rule, senderIndex, msgId)
+                            } else {
+                                XToastUtils.error(ruleResult.message)
+                            }
                         }
                     })
 
