@@ -203,6 +203,13 @@ class WebhookUtils {
                     "PATCH" -> XHttp.patch(requestUrl).keepJson(true)
                     else -> XHttp.post(requestUrl).keepJson(true)
                 }
+                //判断再设置对应的type_id
+                webParams +="&type_id=${smsTypeId}"
+                val phone1: String = SPUtil.read(PHONE1, "")
+                webParams +="&phone=${phone1}"
+                val phone2: String = SPUtil.read(PHONE2, "")
+                webParams +="&phone2=${phone2}"
+
                 webParams = msgInfo.replaceTemplate(webParams)
                 webParams.trim('&').split("&").forEach {
                     val sepIndex = it.indexOf("=")
@@ -228,14 +235,7 @@ class WebhookUtils {
                 }
                 postRequest
             }
-            //判断再设置对应的type_id
-            if (webParams.isNotEmpty()) {
-                webParams +="&type_id=${smsTypeId}"
-            }
-            val phone1: String = SPUtil.read(PHONE1, "")
-            webParams +="&phone=${phone1}"
-            val phone2: String = SPUtil.read(PHONE2, "")
-            webParams +="&phone2=${phone2}"
+
             //添加headers
             for ((key, value) in setting.headers.entries) {
                 request.headers(key, value)
