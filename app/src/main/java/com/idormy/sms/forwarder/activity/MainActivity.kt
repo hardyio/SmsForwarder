@@ -7,6 +7,7 @@ import android.graphics.drawable.Drawable
 import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.View
 import android.widget.LinearLayout
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -44,6 +45,7 @@ import com.idormy.sms.forwarder.utils.SettingUtils
 import com.idormy.sms.forwarder.utils.XToastUtils
 import com.idormy.sms.forwarder.workers.LoadAppListWorker
 import com.jeremyliao.liveeventbus.LiveEventBus
+import com.sms.note.BuildConfig
 import com.sms.note.R
 import com.sms.note.databinding.ActivityMainBinding
 import com.xuexiang.xhttp2.XHttp
@@ -152,14 +154,15 @@ class MainActivity : BaseActivity<ActivityMainBinding?>(), DrawerAdapter.OnItemS
         WidgetUtils.addTabWithoutRipple(mTabLayout, getString(R.string.menu_settings), R.drawable.selector_icon_tabbar_settings)
         WidgetUtils.setTabLayoutTextFont(mTabLayout)
 
-//        switchPage(MainFragment::class.java)
-        switchPage(LogsFragment::class.java)
+        switchPage(MainFragment::class.java)
+//        switchPage(LogsFragment::class.java)
         mTabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab) {
                 needToAppListFragment = false
                 mAdapter.setSelected(tab.position)
                 when (tab.position) {
-                    POS_LOG -> switchPage(LogsFragment::class.java)
+                    POS_LOG -> switchPage(MainFragment::class.java)
+//                    POS_LOG -> switchPage(LogsFragment::class.java)
                     POS_RULE -> switchPage(RulesFragment::class.java)
                     POS_SENDER -> switchPage(SendersFragment::class.java)
                     POS_SETTING -> switchPage(SettingsFragment::class.java)
@@ -169,6 +172,7 @@ class MainActivity : BaseActivity<ActivityMainBinding?>(), DrawerAdapter.OnItemS
             override fun onTabUnselected(tab: TabLayout.Tab) {}
             override fun onTabReselected(tab: TabLayout.Tab) {}
         })
+        mTabLayout.visibility = if (BuildConfig.DEBUG) View.VISIBLE else View.GONE
     }
 
     private fun initData() {
@@ -234,35 +238,37 @@ class MainActivity : BaseActivity<ActivityMainBinding?>(), DrawerAdapter.OnItemS
         list.layoutManager = LinearLayoutManager(this)
         list.adapter = mAdapter
         mAdapter.setSelected(POS_LOG)
-        mSlidingRootNav.isMenuLocked = false
-        mSlidingRootNav.layout.addDragStateListener(object : DragStateListener {
-            override fun onDragStart() {
-                ViewUtils.setVisibility(mLLMenu, true)
-            }
+        mSlidingRootNav.isMenuLocked = !BuildConfig.DEBUG
+        if (BuildConfig.DEBUG) {
+            mSlidingRootNav.layout.addDragStateListener(object : DragStateListener {
+                override fun onDragStart() {
+                    ViewUtils.setVisibility(mLLMenu, true)
+                }
 
-            override fun onDragEnd(isMenuOpened: Boolean) {
-                ViewUtils.setVisibility(mLLMenu, isMenuOpened)
-                /*if (isMenuOpened) {
-                    if (!GuideCaseView.isShowOnce(this@MainActivity, getString(R.string.guide_key_sliding_root_navigation))) {
-                        val guideStep1 = GuideCaseView.Builder(this@MainActivity)
-                            .title("点击进入，可切换主题样式哦～～")
-                            .titleSize(18, TypedValue.COMPLEX_UNIT_SP)
-                            .focusOn(ivSetting)
-                            .build()
-                        val guideStep2 = GuideCaseView.Builder(this@MainActivity)
-                            .title("点击进入，扫码关注哦～～")
-                            .titleSize(18, TypedValue.COMPLEX_UNIT_SP)
-                            .focusOn(ivQrcode)
-                            .build()
-                        GuideCaseQueue()
-                            .add(guideStep1)
-                            .add(guideStep2)
-                            .show()
-                        GuideCaseView.setShowOnce(this@MainActivity, getString(R.string.guide_key_sliding_root_navigation))
-                    }
-                }*/
-            }
-        })
+                override fun onDragEnd(isMenuOpened: Boolean) {
+                    ViewUtils.setVisibility(mLLMenu, isMenuOpened)
+                    /*if (isMenuOpened) {
+                        if (!GuideCaseView.isShowOnce(this@MainActivity, getString(R.string.guide_key_sliding_root_navigation))) {
+                            val guideStep1 = GuideCaseView.Builder(this@MainActivity)
+                                .title("点击进入，可切换主题样式哦～～")
+                                .titleSize(18, TypedValue.COMPLEX_UNIT_SP)
+                                .focusOn(ivSetting)
+                                .build()
+                            val guideStep2 = GuideCaseView.Builder(this@MainActivity)
+                                .title("点击进入，扫码关注哦～～")
+                                .titleSize(18, TypedValue.COMPLEX_UNIT_SP)
+                                .focusOn(ivQrcode)
+                                .build()
+                            GuideCaseQueue()
+                                .add(guideStep1)
+                                .add(guideStep2)
+                                .show()
+                            GuideCaseView.setShowOnce(this@MainActivity, getString(R.string.guide_key_sliding_root_navigation))
+                        }
+                    }*/
+                }
+            })
+        }
     }
 
     override fun onItemSelected(position: Int) {

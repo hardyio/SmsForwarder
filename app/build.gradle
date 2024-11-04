@@ -85,16 +85,16 @@ android {
 
     signingConfigs {
         release {
-            keyAlias keyProps['keyAlias']
-            keyPassword keyProps['keyPassword']
-            storeFile keyProps['storeFile'] ? file(keyProps['storeFile']) : null
-            storePassword keyProps['storePassword']
+            keyAlias keyProps['release_keyAlias']
+            keyPassword keyProps['release_keyPassword']
+            storeFile keyProps['release_storeFile'] ? file(keyProps['release_storeFile']) : null
+            storePassword keyProps['release_storePassword']
         }
         debug {
-            keyAlias keyProps['keyAlias']
-            keyPassword keyProps['keyPassword']
-            storeFile keyProps['storeFile'] ? file(keyProps['storeFile']) : null
-            storePassword keyProps['storePassword']
+            keyAlias keyProps['debug_keyAlias']
+            keyPassword keyProps['debug_keyPassword']
+            storeFile keyProps['debug_storeFile'] ? file(keyProps['debug_storeFile']) : null
+            storePassword keyProps['debug_storePassword']
         }
     }
 
