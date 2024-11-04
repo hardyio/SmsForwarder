@@ -230,18 +230,21 @@ class MainFragment : BaseFragment<FragmentMainBinding?>(), MsgPagingAdapter.OnIt
             val phone = SPUtil.read(phoneTag, "")
             tvPhone.text = "$phoneTag:$phone"
             ivDel.setOnClickListener {
-                val action = object : TitleBar.ImageAction(R.drawable.ic_add) {
-                    @SingleClick
-                    override fun performAction(view: View) {
-                        val canCancel: Boolean = (binding?.llPhoneContainer?.childCount ?: 0) > 0
-                        showInputDialog(canCancel)
-                    }
-                }
-                titleBar!!.addAction(action)
                 //重置本地数据
                 smsRuleMap.remove(phone.toLong())
                 SPUtil.write(phoneTag, "")
                 refreshViewByPhoneCount()
+                val childCount: Int = llPhoneContainer.childCount
+                if (childCount == 1) {
+                    val action = object : TitleBar.ImageAction(R.drawable.ic_add) {
+                        @SingleClick
+                        override fun performAction(view: View) {
+                            val canCancel: Boolean = (binding?.llPhoneContainer?.childCount ?: 0) > 0
+                            showInputDialog(canCancel)
+                        }
+                    }
+                    titleBar!!.addAction(action)
+                }
             }
             llPhoneContainer.addView(inflate)
             val childCount: Int = llPhoneContainer.childCount
