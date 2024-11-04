@@ -1,7 +1,7 @@
 package com.idormy.sms.forwarder.utils.update
 
-import com.idormy.sms.forwarder.R
 import com.idormy.sms.forwarder.utils.XToastUtils
+import com.sms.note.R
 import com.xuexiang.xhttp2.XHttp
 import com.xuexiang.xhttp2.XHttpSDK
 import com.xuexiang.xhttp2.callback.DownloadProgressCallBack

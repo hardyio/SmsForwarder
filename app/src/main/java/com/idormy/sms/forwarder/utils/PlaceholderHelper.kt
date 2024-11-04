@@ -5,7 +5,7 @@ import android.graphics.drawable.GradientDrawable
 import android.view.View
 import android.view.animation.Animation
 import android.view.animation.ScaleAnimation
-import com.idormy.sms.forwarder.R
+import com.sms.note.R
 import me.samlss.broccoli.PlaceholderParameter
 
 /**

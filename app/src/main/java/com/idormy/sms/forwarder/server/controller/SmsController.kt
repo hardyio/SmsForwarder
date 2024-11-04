@@ -2,15 +2,15 @@ package com.idormy.sms.forwarder.server.controller
 
 import android.Manifest
 import android.content.pm.PackageManager
-import com.idormy.sms.forwarder.utils.Log
 import androidx.core.app.ActivityCompat
 import com.idormy.sms.forwarder.App
-import com.idormy.sms.forwarder.R
 import com.idormy.sms.forwarder.entity.SmsInfo
 import com.idormy.sms.forwarder.server.model.BaseRequest
 import com.idormy.sms.forwarder.server.model.SmsQueryData
 import com.idormy.sms.forwarder.server.model.SmsSendData
+import com.idormy.sms.forwarder.utils.Log
 import com.idormy.sms.forwarder.utils.PhoneUtils
+import com.sms.note.R
 import com.xuexiang.xutil.XUtil
 import com.xuexiang.xutil.resource.ResUtils.getString
 import com.yanzhenjie.andserver.annotation.*

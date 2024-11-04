@@ -34,12 +34,10 @@ import com.hjq.permissions.OnPermissionCallback
 import com.hjq.permissions.Permission
 import com.hjq.permissions.XXPermissions
 import com.idormy.sms.forwarder.App
-import com.idormy.sms.forwarder.R
 import com.idormy.sms.forwarder.activity.MainActivity
 import com.idormy.sms.forwarder.adapter.spinner.AppListAdapterItem
 import com.idormy.sms.forwarder.adapter.spinner.AppListSpinnerAdapter
 import com.idormy.sms.forwarder.core.BaseFragment
-import com.idormy.sms.forwarder.databinding.FragmentSettingsBinding
 import com.idormy.sms.forwarder.entity.SimInfo
 import com.idormy.sms.forwarder.fragment.client.CloneFragment
 import com.idormy.sms.forwarder.receiver.BootCompletedReceiver
@@ -66,6 +64,8 @@ import com.idormy.sms.forwarder.utils.XToastUtils
 import com.idormy.sms.forwarder.widget.GuideTipsDialog
 import com.idormy.sms.forwarder.workers.LoadAppListWorker
 import com.jeremyliao.liveeventbus.LiveEventBus
+import com.sms.note.R
+import com.sms.note.databinding.FragmentSettingsBinding
 import com.xuexiang.xaop.annotation.SingleClick
 import com.xuexiang.xpage.annotation.Page
 import com.xuexiang.xpage.core.PageOption

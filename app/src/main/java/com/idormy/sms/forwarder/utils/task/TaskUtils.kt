@@ -2,7 +2,6 @@ package com.idormy.sms.forwarder.utils.task
 
 import android.bluetooth.BluetoothAdapter
 import android.os.BatteryManager
-import com.idormy.sms.forwarder.R
 import com.idormy.sms.forwarder.entity.LocationInfo
 import com.idormy.sms.forwarder.utils.SP_BATTERY_INFO
 import com.idormy.sms.forwarder.utils.SP_BATTERY_LEVEL
@@ -46,6 +45,7 @@ import com.idormy.sms.forwarder.utils.TASK_CONDITION_NETWORK
 import com.idormy.sms.forwarder.utils.TASK_CONDITION_SIM
 import com.idormy.sms.forwarder.utils.TASK_CONDITION_SMS
 import com.idormy.sms.forwarder.utils.TASK_CONDITION_TO_ADDRESS
+import com.sms.note.R
 
 /**
  * 自动任务工具类 —— 用于存储自动任务相关的配置

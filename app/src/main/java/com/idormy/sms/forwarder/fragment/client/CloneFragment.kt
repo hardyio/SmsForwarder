@@ -14,10 +14,8 @@ import com.hjq.permissions.OnPermissionCallback
 import com.hjq.permissions.Permission
 import com.hjq.permissions.XXPermissions
 import com.idormy.sms.forwarder.App
-import com.idormy.sms.forwarder.R
 import com.idormy.sms.forwarder.activity.MainActivity
 import com.idormy.sms.forwarder.core.BaseFragment
-import com.idormy.sms.forwarder.databinding.FragmentClientCloneBinding
 import com.idormy.sms.forwarder.entity.CloneInfo
 import com.idormy.sms.forwarder.server.model.BaseResponse
 import com.idormy.sms.forwarder.utils.AppUtils
@@ -30,6 +28,8 @@ import com.idormy.sms.forwarder.utils.RSACrypt
 import com.idormy.sms.forwarder.utils.SM4Crypt
 import com.idormy.sms.forwarder.utils.SettingUtils
 import com.idormy.sms.forwarder.utils.XToastUtils
+import com.sms.note.R
+import com.sms.note.databinding.FragmentClientCloneBinding
 import com.xuexiang.xaop.annotation.SingleClick
 import com.xuexiang.xhttp2.XHttp
 import com.xuexiang.xhttp2.cache.model.CacheMode

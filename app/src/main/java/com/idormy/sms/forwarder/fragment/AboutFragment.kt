@@ -4,11 +4,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.idormy.sms.forwarder.App
-import com.idormy.sms.forwarder.BuildConfig
-import com.idormy.sms.forwarder.R
 import com.idormy.sms.forwarder.core.BaseFragment
 import com.idormy.sms.forwarder.core.webview.AgentWebActivity
-import com.idormy.sms.forwarder.databinding.FragmentAboutBinding
 import com.idormy.sms.forwarder.utils.AppUtils
 import com.idormy.sms.forwarder.utils.CacheUtils
 import com.idormy.sms.forwarder.utils.CommonUtils.Companion.gotoProtocol
@@ -21,6 +18,9 @@ import com.idormy.sms.forwarder.utils.Log
 import com.idormy.sms.forwarder.utils.SettingUtils
 import com.idormy.sms.forwarder.utils.XToastUtils
 import com.idormy.sms.forwarder.utils.sdkinit.XUpdateInit
+import com.sms.note.BuildConfig
+import com.sms.note.R
+import com.sms.note.databinding.FragmentAboutBinding
 import com.xuexiang.xaop.annotation.SingleClick
 import com.xuexiang.xpage.annotation.Page
 import com.xuexiang.xui.widget.actionbar.TitleBar

@@ -5,8 +5,8 @@ import android.content.Intent
 import android.os.Bundle
 import android.text.TextUtils
 import androidx.appcompat.app.AppCompatActivity
-import com.idormy.sms.forwarder.R
 import com.idormy.sms.forwarder.utils.CommonUtils.Companion.goWeb
+import com.sms.note.R
 import com.xuexiang.xui.widget.dialog.DialogLoader
 import com.xuexiang.xupdate.XUpdate
 

@@ -3,7 +3,7 @@ package com.idormy.sms.forwarder.core
 import android.content.Context
 import android.view.View
 import android.widget.TextView
-import com.idormy.sms.forwarder.R
+import com.sms.note.R
 import com.xuexiang.xui.adapter.listview.BaseListAdapter
 import com.xuexiang.xutil.common.StringUtils
 

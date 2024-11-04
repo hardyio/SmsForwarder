@@ -11,11 +11,11 @@ import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.idormy.sms.forwarder.App
-import com.idormy.sms.forwarder.R
 import com.idormy.sms.forwarder.adapter.MsgPagingAdapter.MyViewHolder
 import com.idormy.sms.forwarder.database.entity.LogsDetail
 import com.idormy.sms.forwarder.database.entity.MsgAndLogs
-import com.idormy.sms.forwarder.databinding.AdapterLogsCardViewListItemBinding
+import com.sms.note.R
+import com.sms.note.databinding.AdapterLogsCardViewListItemBinding
 import com.xuexiang.xutil.data.DateUtils
 
 @Suppress("EmptyMethod")

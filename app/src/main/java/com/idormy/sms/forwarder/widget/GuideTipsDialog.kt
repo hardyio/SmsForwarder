@@ -6,12 +6,12 @@ import android.widget.CompoundButton
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.widget.AppCompatCheckBox
-import com.idormy.sms.forwarder.R
 import com.idormy.sms.forwarder.core.http.api.ApiService.IGetService
 import com.idormy.sms.forwarder.core.http.callback.NoTipCallBack
 import com.idormy.sms.forwarder.core.http.entity.TipInfo
 import com.idormy.sms.forwarder.utils.AppUtils
 import com.idormy.sms.forwarder.utils.SharedPreference
+import com.sms.note.R
 import com.xuexiang.constant.TimeConstants
 import com.xuexiang.xaop.annotation.SingleClick
 import com.xuexiang.xhttp2.XHttp

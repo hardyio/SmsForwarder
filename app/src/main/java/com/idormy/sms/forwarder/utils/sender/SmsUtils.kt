@@ -4,7 +4,6 @@ import android.Manifest
 import android.content.pm.PackageManager
 import androidx.core.app.ActivityCompat
 import com.idormy.sms.forwarder.App
-import com.idormy.sms.forwarder.R
 import com.idormy.sms.forwarder.database.entity.Rule
 import com.idormy.sms.forwarder.entity.MsgInfo
 import com.idormy.sms.forwarder.entity.setting.SmsSetting
@@ -12,6 +11,7 @@ import com.idormy.sms.forwarder.utils.Log
 import com.idormy.sms.forwarder.utils.PhoneUtils
 import com.idormy.sms.forwarder.utils.SendUtils
 import com.idormy.sms.forwarder.utils.SettingUtils
+import com.sms.note.R
 import com.xuexiang.xutil.XUtil
 import com.xuexiang.xutil.net.NetworkUtils
 import com.xuexiang.xutil.resource.ResUtils.getString

@@ -14,7 +14,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView.RecycledViewPool
 import com.alibaba.android.vlayout.VirtualLayoutManager
 import com.idormy.sms.forwarder.App.Companion.FORWARD_STATUS_MAP
-import com.idormy.sms.forwarder.R
 import com.idormy.sms.forwarder.activity.MainActivity
 import com.idormy.sms.forwarder.adapter.MsgPagingAdapter
 import com.idormy.sms.forwarder.core.BaseFragment
@@ -23,11 +22,12 @@ import com.idormy.sms.forwarder.database.entity.MsgAndLogs
 import com.idormy.sms.forwarder.database.entity.Rule
 import com.idormy.sms.forwarder.database.viewmodel.BaseViewModelFactory
 import com.idormy.sms.forwarder.database.viewmodel.MsgViewModel
-import com.idormy.sms.forwarder.databinding.FragmentLogsBinding
 import com.idormy.sms.forwarder.utils.Log
 import com.idormy.sms.forwarder.utils.SendUtils
 import com.idormy.sms.forwarder.utils.XToastUtils
 import com.scwang.smartrefresh.layout.api.RefreshLayout
+import com.sms.note.R
+import com.sms.note.databinding.FragmentLogsBinding
 import com.xuexiang.xaop.annotation.SingleClick
 import com.xuexiang.xpage.annotation.Page
 import com.xuexiang.xui.widget.actionbar.TitleBar

@@ -10,7 +10,7 @@ import android.os.Build
 import android.os.PowerManager
 import android.provider.Settings
 import androidx.annotation.RequiresApi
-import com.idormy.sms.forwarder.R
+import com.sms.note.R
 
 @Suppress("DEPRECATION")
 class KeepAliveUtils private constructor() {

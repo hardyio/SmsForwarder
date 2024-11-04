@@ -7,7 +7,6 @@ import android.telephony.TelephonyManager
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.workDataOf
-import com.idormy.sms.forwarder.R
 import com.idormy.sms.forwarder.utils.DELAY_TIME_AFTER_SIM_READY
 import com.idormy.sms.forwarder.utils.Log
 import com.idormy.sms.forwarder.utils.SettingUtils
@@ -15,6 +14,7 @@ import com.idormy.sms.forwarder.utils.TASK_CONDITION_SIM
 import com.idormy.sms.forwarder.utils.TaskWorker
 import com.idormy.sms.forwarder.utils.task.TaskUtils
 import com.idormy.sms.forwarder.workers.SimWorker
+import com.sms.note.R
 import com.xuexiang.xutil.resource.ResUtils.getString
 import java.util.concurrent.TimeUnit
 

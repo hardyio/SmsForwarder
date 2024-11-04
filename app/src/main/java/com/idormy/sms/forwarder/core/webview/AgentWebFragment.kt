@@ -30,7 +30,6 @@ import androidx.annotation.RequiresApi
 import androidx.appcompat.widget.PopupMenu
 import androidx.fragment.app.Fragment
 import com.idormy.sms.forwarder.App
-import com.idormy.sms.forwarder.R
 import com.idormy.sms.forwarder.utils.Log
 import com.idormy.sms.forwarder.utils.XToastUtils
 import com.just.agentweb.action.PermissionInterceptor
@@ -47,6 +46,7 @@ import com.just.agentweb.download.DownloadListenerAdapter
 import com.just.agentweb.download.DownloadingService
 import com.just.agentweb.utils.LogUtils
 import com.just.agentweb.widget.IWebLayout
+import com.sms.note.R
 import com.xuexiang.xutil.net.JsonUtil
 
 /**

@@ -6,9 +6,9 @@ import androidx.room.Entity
 import androidx.room.Ignore
 import androidx.room.PrimaryKey
 import com.idormy.sms.forwarder.App
-import com.idormy.sms.forwarder.R
 import com.idormy.sms.forwarder.utils.STATUS_OFF
 import com.idormy.sms.forwarder.utils.STATUS_ON
+import com.sms.note.R
 import frpclib.Frpclib
 import kotlinx.parcelize.Parcelize
 import java.util.Date

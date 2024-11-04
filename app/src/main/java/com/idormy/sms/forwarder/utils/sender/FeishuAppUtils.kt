@@ -2,7 +2,6 @@ package com.idormy.sms.forwarder.utils.sender
 
 import android.text.TextUtils
 import com.google.gson.Gson
-import com.idormy.sms.forwarder.R
 import com.idormy.sms.forwarder.database.entity.Rule
 import com.idormy.sms.forwarder.entity.MsgInfo
 import com.idormy.sms.forwarder.entity.result.FeishuAppResult
@@ -12,6 +11,7 @@ import com.idormy.sms.forwarder.utils.SendUtils
 import com.idormy.sms.forwarder.utils.SettingUtils
 import com.idormy.sms.forwarder.utils.SharedPreference
 import com.idormy.sms.forwarder.utils.interceptor.LoggingInterceptor
+import com.sms.note.R
 import com.xuexiang.xhttp2.XHttp
 import com.xuexiang.xhttp2.callback.SimpleCallBack
 import com.xuexiang.xhttp2.exception.ApiException

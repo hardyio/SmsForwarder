@@ -1,7 +1,7 @@
 package com.idormy.sms.forwarder.utils
 
-import com.idormy.sms.forwarder.R
 import com.idormy.sms.forwarder.entity.MsgInfo
+import com.sms.note.R
 import com.xuexiang.xutil.resource.ResUtils.getString
 import java.util.regex.Pattern
 import java.util.regex.PatternSyntaxException

@@ -10,7 +10,6 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.RecycledViewPool
 import com.alibaba.android.vlayout.VirtualLayoutManager
 import com.google.android.material.bottomsheet.BottomSheetDialog
-import com.idormy.sms.forwarder.R
 import com.idormy.sms.forwarder.activity.MainActivity
 import com.idormy.sms.forwarder.adapter.SenderPagingAdapter
 import com.idormy.sms.forwarder.adapter.WidgetItemAdapter
@@ -18,7 +17,6 @@ import com.idormy.sms.forwarder.core.BaseFragment
 import com.idormy.sms.forwarder.database.entity.Sender
 import com.idormy.sms.forwarder.database.viewmodel.BaseViewModelFactory
 import com.idormy.sms.forwarder.database.viewmodel.SenderViewModel
-import com.idormy.sms.forwarder.databinding.FragmentSendersBinding
 import com.idormy.sms.forwarder.fragment.senders.BarkFragment
 import com.idormy.sms.forwarder.fragment.senders.DingtalkGroupRobotFragment
 import com.idormy.sms.forwarder.fragment.senders.DingtalkInnerRobotFragment
@@ -57,6 +55,8 @@ import com.idormy.sms.forwarder.utils.TYPE_WEWORK_AGENT
 import com.idormy.sms.forwarder.utils.TYPE_WEWORK_ROBOT
 import com.idormy.sms.forwarder.utils.XToastUtils
 import com.scwang.smartrefresh.layout.api.RefreshLayout
+import com.sms.note.R
+import com.sms.note.databinding.FragmentSendersBinding
 import com.xuexiang.xaop.annotation.SingleClick
 import com.xuexiang.xpage.annotation.Page
 import com.xuexiang.xpage.base.XPageFragment

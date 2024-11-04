@@ -9,9 +9,9 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
-import com.idormy.sms.forwarder.R
 import com.idormy.sms.forwarder.adapter.base.ItemMoveCallback
 import com.idormy.sms.forwarder.database.entity.Sender
+import com.sms.note.R
 import java.util.Collections
 
 @Suppress("DEPRECATION")

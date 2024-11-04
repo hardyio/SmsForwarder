@@ -1,7 +1,7 @@
 package com.idormy.sms.forwarder.utils
 
 import android.location.Criteria
-import com.idormy.sms.forwarder.R
+import com.sms.note.R
 import com.xuexiang.xutil.resource.ResUtils.getString
 
 class SettingUtils private constructor() {

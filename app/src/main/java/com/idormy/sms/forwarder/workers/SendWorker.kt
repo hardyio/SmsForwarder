@@ -9,7 +9,6 @@ import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import androidx.work.workDataOf
 import com.google.gson.Gson
-import com.idormy.sms.forwarder.R
 import com.idormy.sms.forwarder.core.Core
 import com.idormy.sms.forwarder.database.entity.Logs
 import com.idormy.sms.forwarder.database.entity.Msg
@@ -28,6 +27,7 @@ import com.idormy.sms.forwarder.utils.TASK_CONDITION_SMS
 import com.idormy.sms.forwarder.utils.TaskWorker
 import com.idormy.sms.forwarder.utils.Worker
 import com.idormy.sms.forwarder.utils.task.ConditionUtils
+import com.sms.note.R
 import com.xuexiang.xutil.resource.ResUtils
 import com.xuexiang.xutil.security.CipherUtils
 import kotlinx.coroutines.Dispatchers

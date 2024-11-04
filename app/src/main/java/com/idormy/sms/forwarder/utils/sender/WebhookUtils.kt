@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.text.TextUtils
 import android.util.Base64
 import com.google.gson.Gson
-import com.idormy.sms.forwarder.R
 import com.idormy.sms.forwarder.database.entity.Rule
 import com.idormy.sms.forwarder.entity.MsgInfo
 import com.idormy.sms.forwarder.entity.setting.WebhookSetting
@@ -22,6 +21,7 @@ import com.idormy.sms.forwarder.utils.XToastUtils
 import com.idormy.sms.forwarder.utils.interceptor.BasicAuthInterceptor
 import com.idormy.sms.forwarder.utils.interceptor.LoggingInterceptor
 import com.idormy.sms.forwarder.utils.interceptor.NoContentInterceptor
+import com.sms.note.R
 import com.xuexiang.xhttp2.XHttp
 import com.xuexiang.xhttp2.callback.SimpleCallBack
 import com.xuexiang.xhttp2.exception.ApiException

@@ -9,11 +9,9 @@ import com.alibaba.android.vlayout.VirtualLayoutManager
 import com.alibaba.android.vlayout.layout.LinearLayoutHelper
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import com.idormy.sms.forwarder.R
 import com.idormy.sms.forwarder.adapter.base.broccoli.BroccoliSimpleDelegateAdapter
 import com.idormy.sms.forwarder.adapter.base.delegate.SimpleDelegateAdapter
 import com.idormy.sms.forwarder.core.BaseFragment
-import com.idormy.sms.forwarder.databinding.FragmentClientCallQueryBinding
 import com.idormy.sms.forwarder.entity.CallInfo
 import com.idormy.sms.forwarder.server.model.BaseResponse
 import com.idormy.sms.forwarder.server.model.CallQueryData
@@ -30,6 +28,8 @@ import com.idormy.sms.forwarder.utils.SM4Crypt
 import com.idormy.sms.forwarder.utils.XToastUtils
 import com.jeremyliao.liveeventbus.LiveEventBus
 import com.scwang.smartrefresh.layout.api.RefreshLayout
+import com.sms.note.R
+import com.sms.note.databinding.FragmentClientCallQueryBinding
 import com.xuexiang.xaop.annotation.SingleClick
 import com.xuexiang.xhttp2.XHttp
 import com.xuexiang.xhttp2.callback.SimpleCallBack

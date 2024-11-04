@@ -5,8 +5,8 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.KeyEvent
 import androidx.appcompat.app.AppCompatActivity
-import com.idormy.sms.forwarder.R
 import com.idormy.sms.forwarder.utils.XToastUtils
+import com.sms.note.R
 import com.xuexiang.xrouter.facade.Postcard
 import com.xuexiang.xrouter.facade.callback.NavCallback
 import com.xuexiang.xrouter.launcher.XRouter

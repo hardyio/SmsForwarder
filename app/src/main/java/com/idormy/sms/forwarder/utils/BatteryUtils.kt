@@ -2,8 +2,8 @@ package com.idormy.sms.forwarder.utils
 
 import android.content.Intent
 import android.os.BatteryManager
-import com.idormy.sms.forwarder.R
 import com.idormy.sms.forwarder.entity.BatteryInfo
+import com.sms.note.R
 import com.xuexiang.xutil.resource.ResUtils.getString
 
 @Suppress("MemberVisibilityCanBePrivate")

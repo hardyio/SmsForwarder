@@ -7,9 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import com.google.gson.Gson
 import com.idormy.sms.forwarder.App
-import com.idormy.sms.forwarder.R
 import com.idormy.sms.forwarder.core.BaseFragment
-import com.idormy.sms.forwarder.databinding.FragmentTasksConditionLeaveAddressBinding
 import com.idormy.sms.forwarder.entity.condition.LocationSetting
 import com.idormy.sms.forwarder.service.LocationService
 import com.idormy.sms.forwarder.utils.ACTION_START
@@ -21,6 +19,8 @@ import com.idormy.sms.forwarder.utils.Log
 import com.idormy.sms.forwarder.utils.SettingUtils
 import com.idormy.sms.forwarder.utils.TASK_CONDITION_LEAVE_ADDRESS
 import com.idormy.sms.forwarder.utils.XToastUtils
+import com.sms.note.R
+import com.sms.note.databinding.FragmentTasksConditionLeaveAddressBinding
 import com.xuexiang.xaop.annotation.SingleClick
 import com.xuexiang.xpage.annotation.Page
 import com.xuexiang.xrouter.annotation.AutoWired

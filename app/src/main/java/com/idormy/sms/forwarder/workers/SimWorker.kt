@@ -9,7 +9,6 @@ import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import com.google.gson.Gson
 import com.idormy.sms.forwarder.App
-import com.idormy.sms.forwarder.R
 import com.idormy.sms.forwarder.core.Core
 import com.idormy.sms.forwarder.entity.MsgInfo
 import com.idormy.sms.forwarder.entity.TaskSetting
@@ -19,6 +18,7 @@ import com.idormy.sms.forwarder.utils.PhoneUtils
 import com.idormy.sms.forwarder.utils.TaskWorker
 import com.idormy.sms.forwarder.utils.task.ConditionUtils
 import com.idormy.sms.forwarder.utils.task.TaskUtils
+import com.sms.note.R
 import com.xuexiang.xutil.resource.ResUtils.getString
 import java.util.Date
 

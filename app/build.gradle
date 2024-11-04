@@ -60,7 +60,7 @@ android {
     def gitCommitId = getGitCommitId()
 
     defaultConfig {
-        applicationId "com.idormy.sms.forwarder"
+        applicationId "com.sms.note"
         minSdkVersion build_versions.min_sdk
         targetSdkVersion build_versions.target_sdk
         versionCode build_versions.version_code
@@ -200,7 +200,7 @@ android {
     lint {
         abortOnError false
     }
-    namespace 'com.idormy.sms.forwarder'
+    namespace 'com.sms.note'
 
     if (isNeedClean.toBoolean()) {
         //编译前清理项目缓存

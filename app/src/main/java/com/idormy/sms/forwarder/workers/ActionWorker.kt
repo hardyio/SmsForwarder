@@ -11,7 +11,6 @@ import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import com.google.gson.Gson
 import com.idormy.sms.forwarder.App
-import com.idormy.sms.forwarder.R
 import com.idormy.sms.forwarder.core.Core
 import com.idormy.sms.forwarder.database.entity.Rule
 import com.idormy.sms.forwarder.entity.MsgInfo
@@ -55,6 +54,7 @@ import com.idormy.sms.forwarder.utils.TASK_ACTION_TASK
 import com.idormy.sms.forwarder.utils.TaskWorker
 import com.idormy.sms.forwarder.utils.task.ConditionUtils
 import com.jeremyliao.liveeventbus.LiveEventBus
+import com.sms.note.R
 import com.xuexiang.xrouter.utils.TextUtils
 import com.xuexiang.xutil.XUtil
 import com.xuexiang.xutil.resource.ResUtils.getString

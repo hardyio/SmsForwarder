@@ -5,7 +5,6 @@ import android.text.TextUtils
 import com.google.gson.Gson
 import com.idormy.sms.forwarder.App
 import com.idormy.sms.forwarder.App.Companion.CALL_TYPE_MAP
-import com.idormy.sms.forwarder.R
 import com.idormy.sms.forwarder.utils.AppUtils
 import com.idormy.sms.forwarder.utils.BatteryUtils
 import com.idormy.sms.forwarder.utils.HttpServerUtils
@@ -15,6 +14,7 @@ import com.idormy.sms.forwarder.utils.SettingUtils.Companion.enableSmsTemplate
 import com.idormy.sms.forwarder.utils.SettingUtils.Companion.extraDeviceMark
 import com.idormy.sms.forwarder.utils.SettingUtils.Companion.smsTemplate
 import com.idormy.sms.forwarder.utils.task.TaskUtils
+import com.sms.note.R
 import com.xuexiang.xutil.net.NetworkUtils
 import com.xuexiang.xutil.resource.ResUtils.getString
 import java.io.Serializable

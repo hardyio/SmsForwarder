@@ -9,10 +9,8 @@ import android.widget.RadioGroup
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.idormy.sms.forwarder.App
-import com.idormy.sms.forwarder.R
 import com.idormy.sms.forwarder.adapter.WidgetItemAdapter
 import com.idormy.sms.forwarder.core.BaseFragment
-import com.idormy.sms.forwarder.databinding.FragmentClientBinding
 import com.idormy.sms.forwarder.server.model.BaseResponse
 import com.idormy.sms.forwarder.server.model.ConfigData
 import com.idormy.sms.forwarder.utils.Base64
@@ -23,6 +21,8 @@ import com.idormy.sms.forwarder.utils.RSACrypt
 import com.idormy.sms.forwarder.utils.SM4Crypt
 import com.idormy.sms.forwarder.utils.SettingUtils
 import com.idormy.sms.forwarder.utils.XToastUtils
+import com.sms.note.R
+import com.sms.note.databinding.FragmentClientBinding
 import com.xuexiang.xaop.annotation.SingleClick
 import com.xuexiang.xhttp2.XHttp
 import com.xuexiang.xhttp2.callback.SimpleCallBack

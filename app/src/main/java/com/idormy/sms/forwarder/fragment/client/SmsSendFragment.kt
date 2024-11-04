@@ -6,13 +6,13 @@ import android.view.View
 import android.view.ViewGroup
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import com.idormy.sms.forwarder.R
 import com.idormy.sms.forwarder.core.BaseFragment
-import com.idormy.sms.forwarder.databinding.FragmentClientSmsSendBinding
 import com.idormy.sms.forwarder.server.model.BaseResponse
 import com.idormy.sms.forwarder.server.model.ConfigData
 import com.idormy.sms.forwarder.utils.*
 import com.jeremyliao.liveeventbus.LiveEventBus
+import com.sms.note.R
+import com.sms.note.databinding.FragmentClientSmsSendBinding
 import com.xuexiang.xaop.annotation.SingleClick
 import com.xuexiang.xhttp2.XHttp
 import com.xuexiang.xhttp2.callback.SimpleCallBack

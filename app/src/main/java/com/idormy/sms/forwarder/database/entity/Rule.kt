@@ -7,10 +7,10 @@ import com.idormy.sms.forwarder.App.Companion.CALL_TYPE_MAP
 import com.idormy.sms.forwarder.App.Companion.CHECK_MAP
 import com.idormy.sms.forwarder.App.Companion.FILED_MAP
 import com.idormy.sms.forwarder.App.Companion.SIM_SLOT_MAP
-import com.idormy.sms.forwarder.R
 import com.idormy.sms.forwarder.database.ext.ConvertersSenderList
 import com.idormy.sms.forwarder.entity.MsgInfo
 import com.idormy.sms.forwarder.utils.*
+import com.sms.note.R
 import com.xuexiang.xutil.resource.ResUtils.getString
 import kotlinx.parcelize.Parcelize
 import java.util.*

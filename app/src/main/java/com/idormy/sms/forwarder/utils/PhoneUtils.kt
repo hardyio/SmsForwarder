@@ -18,12 +18,12 @@ import android.text.TextUtils
 import androidx.annotation.RequiresPermission
 import androidx.core.app.ActivityCompat
 import com.idormy.sms.forwarder.App
-import com.idormy.sms.forwarder.R
 import com.idormy.sms.forwarder.core.Core
 import com.idormy.sms.forwarder.entity.CallInfo
 import com.idormy.sms.forwarder.entity.ContactInfo
 import com.idormy.sms.forwarder.entity.SimInfo
 import com.idormy.sms.forwarder.entity.SmsInfo
+import com.sms.note.R
 import com.xuexiang.xutil.XUtil
 import com.xuexiang.xutil.app.IntentUtils
 import com.xuexiang.xutil.data.DateUtils

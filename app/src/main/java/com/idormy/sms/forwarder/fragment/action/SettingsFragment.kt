@@ -18,11 +18,9 @@ import com.hjq.permissions.OnPermissionCallback
 import com.hjq.permissions.Permission
 import com.hjq.permissions.XXPermissions
 import com.idormy.sms.forwarder.App
-import com.idormy.sms.forwarder.R
 import com.idormy.sms.forwarder.adapter.spinner.AppListAdapterItem
 import com.idormy.sms.forwarder.adapter.spinner.AppListSpinnerAdapter
 import com.idormy.sms.forwarder.core.BaseFragment
-import com.idormy.sms.forwarder.databinding.FragmentTasksActionSettingsBinding
 import com.idormy.sms.forwarder.entity.MsgInfo
 import com.idormy.sms.forwarder.entity.TaskSetting
 import com.idormy.sms.forwarder.entity.action.SettingsSetting
@@ -39,6 +37,8 @@ import com.idormy.sms.forwarder.utils.XToastUtils
 import com.idormy.sms.forwarder.workers.ActionWorker
 import com.idormy.sms.forwarder.workers.LoadAppListWorker
 import com.jeremyliao.liveeventbus.LiveEventBus
+import com.sms.note.R
+import com.sms.note.databinding.FragmentTasksActionSettingsBinding
 import com.xuexiang.xaop.annotation.SingleClick
 import com.xuexiang.xpage.annotation.Page
 import com.xuexiang.xrouter.annotation.AutoWired

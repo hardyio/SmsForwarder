@@ -5,7 +5,7 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.Index
 import androidx.room.PrimaryKey
-import com.idormy.sms.forwarder.R
+import com.sms.note.R
 import kotlinx.parcelize.Parcelize
 import java.util.Date
 

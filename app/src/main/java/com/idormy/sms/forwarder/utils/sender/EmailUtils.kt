@@ -1,6 +1,5 @@
 package com.idormy.sms.forwarder.utils.sender
 
-import com.idormy.sms.forwarder.R
 import com.idormy.sms.forwarder.database.entity.Rule
 import com.idormy.sms.forwarder.entity.MsgInfo
 import com.idormy.sms.forwarder.entity.setting.EmailSetting
@@ -9,6 +8,7 @@ import com.idormy.sms.forwarder.utils.Log
 import com.idormy.sms.forwarder.utils.SendUtils
 import com.idormy.sms.forwarder.utils.SettingUtils
 import com.idormy.sms.forwarder.utils.mail.EmailSender
+import com.sms.note.R
 import com.xuexiang.xutil.resource.ResUtils.getString
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

@@ -5,7 +5,6 @@ import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.workDataOf
 import com.google.gson.Gson
-import com.idormy.sms.forwarder.R
 import com.idormy.sms.forwarder.core.Core
 import com.idormy.sms.forwarder.database.entity.MsgAndLogs
 import com.idormy.sms.forwarder.database.entity.Rule
@@ -47,6 +46,7 @@ import com.idormy.sms.forwarder.workers.SendLogicWorker
 import com.idormy.sms.forwarder.workers.SendWorker
 import com.idormy.sms.forwarder.workers.UpdateLogsWorker
 import com.jeremyliao.liveeventbus.LiveEventBus
+import com.sms.note.R
 import com.xuexiang.xutil.XUtil
 import com.xuexiang.xutil.resource.ResUtils.getString
 

@@ -4,9 +4,9 @@ import android.os.Parcelable
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.idormy.sms.forwarder.R
 import com.idormy.sms.forwarder.utils.STATUS_OFF
 import com.idormy.sms.forwarder.utils.task.TaskUtils
+import com.sms.note.R
 import kotlinx.parcelize.Parcelize
 import java.util.Date
 

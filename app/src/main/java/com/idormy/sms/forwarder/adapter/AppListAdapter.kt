@@ -1,11 +1,11 @@
 package com.idormy.sms.forwarder.adapter
 
 import android.widget.ImageView
-import com.idormy.sms.forwarder.R
 import com.idormy.sms.forwarder.adapter.base.broccoli.BroccoliRecyclerAdapter
 import com.idormy.sms.forwarder.utils.AppInfo
 import com.idormy.sms.forwarder.utils.AppUtils
 import com.idormy.sms.forwarder.utils.PlaceholderHelper
+import com.sms.note.R
 import com.xuexiang.xui.adapter.recyclerview.RecyclerViewHolder
 import com.xuexiang.xui.widget.imageview.ImageLoader
 import me.samlss.broccoli.Broccoli

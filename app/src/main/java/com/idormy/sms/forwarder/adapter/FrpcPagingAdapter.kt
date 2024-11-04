@@ -9,10 +9,10 @@ import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.idormy.sms.forwarder.App
-import com.idormy.sms.forwarder.R
 import com.idormy.sms.forwarder.adapter.FrpcPagingAdapter.MyViewHolder
 import com.idormy.sms.forwarder.database.entity.Frpc
-import com.idormy.sms.forwarder.databinding.AdapterFrpcsCardViewListItemBinding
+import com.sms.note.R
+import com.sms.note.databinding.AdapterFrpcsCardViewListItemBinding
 import com.xuexiang.xutil.resource.ResUtils.getColors
 import frpclib.Frpclib
 

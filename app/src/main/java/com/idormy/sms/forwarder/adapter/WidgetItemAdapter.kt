@@ -1,6 +1,6 @@
 package com.idormy.sms.forwarder.adapter
 
-import com.idormy.sms.forwarder.R
+import com.sms.note.R
 import com.xuexiang.xpage.model.PageInfo
 import com.xuexiang.xui.adapter.recyclerview.BaseRecyclerAdapter
 import com.xuexiang.xui.adapter.recyclerview.RecyclerViewHolder

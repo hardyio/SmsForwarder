@@ -28,9 +28,7 @@ import androidx.annotation.RequiresApi
 import androidx.appcompat.widget.PopupMenu
 import androidx.fragment.app.Fragment
 import com.idormy.sms.forwarder.App
-import com.idormy.sms.forwarder.R
 import com.idormy.sms.forwarder.core.BaseFragment
-import com.idormy.sms.forwarder.databinding.FragmentAgentwebBinding
 import com.idormy.sms.forwarder.utils.XToastUtils
 import com.just.agentweb.action.PermissionInterceptor
 import com.just.agentweb.core.AgentWeb
@@ -46,6 +44,8 @@ import com.just.agentweb.download.DefaultDownloadImpl
 import com.just.agentweb.download.DownloadListenerAdapter
 import com.just.agentweb.download.DownloadingService
 import com.just.agentweb.widget.IWebLayout
+import com.sms.note.R
+import com.sms.note.databinding.FragmentAgentwebBinding
 import com.xuexiang.xaop.annotation.SingleClick
 import com.xuexiang.xpage.annotation.Page
 import com.xuexiang.xpage.base.XPageActivity

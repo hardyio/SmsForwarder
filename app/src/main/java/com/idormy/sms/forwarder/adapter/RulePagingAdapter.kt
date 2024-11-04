@@ -11,10 +11,10 @@ import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.idormy.sms.forwarder.App
-import com.idormy.sms.forwarder.R
 import com.idormy.sms.forwarder.adapter.RulePagingAdapter.MyViewHolder
 import com.idormy.sms.forwarder.database.entity.Rule
-import com.idormy.sms.forwarder.databinding.AdapterRulesCardViewListItemBinding
+import com.sms.note.R
+import com.sms.note.databinding.AdapterRulesCardViewListItemBinding
 
 @Suppress("EmptyMethod")
 class RulePagingAdapter(private val itemClickListener: OnItemClickListener) : PagingDataAdapter<Rule, MyViewHolder>(diffCallback) {

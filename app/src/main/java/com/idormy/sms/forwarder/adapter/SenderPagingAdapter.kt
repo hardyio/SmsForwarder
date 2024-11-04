@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.idormy.sms.forwarder.adapter.SenderPagingAdapter.MyViewHolder
 import com.idormy.sms.forwarder.database.entity.Sender
-import com.idormy.sms.forwarder.databinding.AdapterSendersCardViewListItemBinding
+import com.sms.note.databinding.AdapterSendersCardViewListItemBinding
 
 @Suppress("EmptyMethod")
 class SenderPagingAdapter(private val itemClickListener: OnItemClickListener) : PagingDataAdapter<Sender, MyViewHolder>(diffCallback) {

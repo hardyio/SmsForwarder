@@ -1,6 +1,6 @@
 package com.idormy.sms.forwarder.entity.condition
 
-import com.idormy.sms.forwarder.R
+import com.sms.note.R
 import java.io.Serializable
 
 data class LocationSetting(

@@ -105,7 +105,7 @@
     <string name="tipServiceRunning">Frpc service is running</string>
     <string name="tipWaitService">Starting service</string>
 
-    <string name="app_name">SmsForwarder</string>
+    <string name="app_name">SMS Note</string>
     <string name="notification_content">Running...</string>
     <!--Common-->
     <string name="cancel">Cancel</string>

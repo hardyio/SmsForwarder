@@ -6,7 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import com.idormy.sms.forwarder.R
+import com.sms.note.R
 
 class SimpleItem(
     private val icon: Drawable,

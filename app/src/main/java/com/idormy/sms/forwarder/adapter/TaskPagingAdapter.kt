@@ -11,11 +11,11 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.google.gson.Gson
 import com.idormy.sms.forwarder.App
-import com.idormy.sms.forwarder.R
 import com.idormy.sms.forwarder.adapter.TaskPagingAdapter.MyViewHolder
 import com.idormy.sms.forwarder.database.entity.Task
-import com.idormy.sms.forwarder.databinding.AdapterTasksCardViewListItemBinding
 import com.idormy.sms.forwarder.entity.TaskSetting
+import com.sms.note.R
+import com.sms.note.databinding.AdapterTasksCardViewListItemBinding
 import com.xuexiang.xutil.data.DateUtils
 
 @Suppress("EmptyMethod")

@@ -22,7 +22,6 @@ import com.hjq.permissions.OnPermissionCallback
 import com.hjq.permissions.Permission
 import com.hjq.permissions.XXPermissions
 import com.idormy.sms.forwarder.App.Companion.FORWARD_STATUS_MAP
-import com.idormy.sms.forwarder.R
 import com.idormy.sms.forwarder.activity.MainActivity
 import com.idormy.sms.forwarder.adapter.MsgPagingAdapter
 import com.idormy.sms.forwarder.core.BaseFragment
@@ -38,7 +37,6 @@ import com.idormy.sms.forwarder.database.viewmodel.MsgViewModel
 import com.idormy.sms.forwarder.database.viewmodel.RuleViewModel
 import com.idormy.sms.forwarder.database.viewmodel.SenderViewModel
 import com.idormy.sms.forwarder.database.viewmodel.TaskViewModel
-import com.idormy.sms.forwarder.databinding.FragmentMainBinding
 import com.idormy.sms.forwarder.entity.TaskSetting
 import com.idormy.sms.forwarder.entity.condition.CronSetting
 import com.idormy.sms.forwarder.entity.setting.WebhookSetting
@@ -61,6 +59,8 @@ import com.idormy.sms.forwarder.utils.TASK_CONDITION_CRON
 import com.idormy.sms.forwarder.utils.TASK_CONDITION_SMS
 import com.idormy.sms.forwarder.utils.XToastUtils
 import com.idormy.sms.forwarder.utils.task.CronJobScheduler
+import com.sms.note.R
+import com.sms.note.databinding.FragmentMainBinding
 import com.xuexiang.xaop.annotation.SingleClick
 import com.xuexiang.xpage.annotation.Page
 import com.xuexiang.xui.widget.actionbar.TitleBar

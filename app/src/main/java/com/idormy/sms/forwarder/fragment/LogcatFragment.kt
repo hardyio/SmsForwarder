@@ -3,11 +3,11 @@ package com.idormy.sms.forwarder.fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.idormy.sms.forwarder.R
 import com.idormy.sms.forwarder.core.BaseFragment
-import com.idormy.sms.forwarder.databinding.FragmentLogcatBinding
 import com.idormy.sms.forwarder.utils.Log
 import com.idormy.sms.forwarder.utils.XToastUtils
+import com.sms.note.R
+import com.sms.note.databinding.FragmentLogcatBinding
 import com.xuexiang.xaop.annotation.SingleClick
 import com.xuexiang.xpage.annotation.Page
 import com.xuexiang.xui.utils.ThemeUtils

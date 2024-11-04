@@ -4,7 +4,6 @@ import android.os.Parcelable
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.idormy.sms.forwarder.R
 import com.idormy.sms.forwarder.utils.STATUS_OFF
 import com.idormy.sms.forwarder.utils.TYPE_BARK
 import com.idormy.sms.forwarder.utils.TYPE_DINGTALK_GROUP_ROBOT
@@ -22,6 +21,7 @@ import com.idormy.sms.forwarder.utils.TYPE_URL_SCHEME
 import com.idormy.sms.forwarder.utils.TYPE_WEBHOOK
 import com.idormy.sms.forwarder.utils.TYPE_WEWORK_AGENT
 import com.idormy.sms.forwarder.utils.TYPE_WEWORK_ROBOT
+import com.sms.note.R
 import kotlinx.parcelize.Parcelize
 import java.util.Date
 

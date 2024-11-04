@@ -10,13 +10,11 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView.RecycledViewPool
 import com.alibaba.android.vlayout.VirtualLayoutManager
 import com.idormy.sms.forwarder.App
-import com.idormy.sms.forwarder.R
 import com.idormy.sms.forwarder.adapter.FrpcPagingAdapter
 import com.idormy.sms.forwarder.core.BaseFragment
 import com.idormy.sms.forwarder.database.entity.Frpc
 import com.idormy.sms.forwarder.database.viewmodel.BaseViewModelFactory
 import com.idormy.sms.forwarder.database.viewmodel.FrpcViewModel
-import com.idormy.sms.forwarder.databinding.FragmentFrpcsBinding
 import com.idormy.sms.forwarder.service.ForegroundService
 import com.idormy.sms.forwarder.utils.ACTION_START
 import com.idormy.sms.forwarder.utils.EVENT_FRPC_DELETE_CONFIG
@@ -30,6 +28,8 @@ import com.idormy.sms.forwarder.utils.INTENT_FRPC_EDIT_FILE
 import com.idormy.sms.forwarder.utils.XToastUtils
 import com.jeremyliao.liveeventbus.LiveEventBus
 import com.scwang.smartrefresh.layout.api.RefreshLayout
+import com.sms.note.R
+import com.sms.note.databinding.FragmentFrpcsBinding
 import com.xuexiang.xaop.annotation.SingleClick
 import com.xuexiang.xpage.annotation.Page
 import com.xuexiang.xpage.base.XPageActivity

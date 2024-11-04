@@ -11,7 +11,7 @@ import android.view.View;
 
 import androidx.appcompat.widget.AppCompatEditText;
 
-import com.idormy.sms.forwarder.R;
+import com.sms.note.R;
 
 
 /**

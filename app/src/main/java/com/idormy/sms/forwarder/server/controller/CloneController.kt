@@ -1,10 +1,10 @@
 package com.idormy.sms.forwarder.server.controller
 
-import com.idormy.sms.forwarder.utils.Log
-import com.idormy.sms.forwarder.R
 import com.idormy.sms.forwarder.entity.CloneInfo
 import com.idormy.sms.forwarder.server.model.BaseRequest
 import com.idormy.sms.forwarder.utils.HttpServerUtils
+import com.idormy.sms.forwarder.utils.Log
+import com.sms.note.R
 import com.xuexiang.xutil.resource.ResUtils.getString
 import com.yanzhenjie.andserver.annotation.*
 

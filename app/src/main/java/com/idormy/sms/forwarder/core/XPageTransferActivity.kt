@@ -2,8 +2,8 @@ package com.idormy.sms.forwarder.core
 
 import android.os.Bundle
 import androidx.viewbinding.ViewBinding
-import com.idormy.sms.forwarder.R
 import com.idormy.sms.forwarder.utils.XToastUtils
+import com.sms.note.R
 import com.xuexiang.xrouter.annotation.AutoWired
 import com.xuexiang.xrouter.annotation.Router
 import com.xuexiang.xrouter.launcher.XRouter

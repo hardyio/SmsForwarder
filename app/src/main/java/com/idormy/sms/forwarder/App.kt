@@ -57,6 +57,8 @@ import com.idormy.sms.forwarder.utils.sdkinit.XBasicLibInit
 import com.idormy.sms.forwarder.utils.sdkinit.XUpdateInit
 import com.idormy.sms.forwarder.utils.tinker.TinkerLoadLibrary
 import com.king.location.LocationClient
+import com.sms.note.BuildConfig
+import com.sms.note.R
 import com.xuexiang.xutil.file.FileUtils
 import frpclib.Frpclib
 import io.reactivex.Observable

@@ -3,7 +3,7 @@ package com.idormy.sms.forwarder.entity.condition
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothDevice
 import com.idormy.sms.forwarder.App
-import com.idormy.sms.forwarder.R
+import com.sms.note.R
 import com.xuexiang.xutil.resource.ResUtils.getString
 import java.io.Serializable
 

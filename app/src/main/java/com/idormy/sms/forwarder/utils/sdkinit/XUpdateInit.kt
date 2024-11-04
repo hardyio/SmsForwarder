@@ -3,12 +3,12 @@ package com.idormy.sms.forwarder.utils.sdkinit
 import android.app.Application
 import android.content.Context
 import com.idormy.sms.forwarder.App
-import com.idormy.sms.forwarder.BuildConfig
 import com.idormy.sms.forwarder.utils.KEY_PREVIEW_URL
 import com.idormy.sms.forwarder.utils.KEY_UPDATE_URL
 import com.idormy.sms.forwarder.utils.update.CustomUpdateDownloader
 import com.idormy.sms.forwarder.utils.update.CustomUpdateFailureListener
 import com.idormy.sms.forwarder.utils.update.XHttpUpdateHttpServiceImpl
+import com.sms.note.BuildConfig
 import com.xuexiang.xupdate.XUpdate
 import com.xuexiang.xupdate.utils.UpdateUtils
 import com.xuexiang.xutil.common.StringUtils
