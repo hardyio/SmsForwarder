@@ -78,7 +78,7 @@ class SettingUtils private constructor() {
         var enableSilentPeriodLogs: Boolean by SharedPreference(SP_ENABLE_SILENT_PERIOD_LOGS, false)
 
         //是否不在最近任务列表中显示
-        var enableExcludeFromRecents: Boolean by SharedPreference(SP_ENABLE_EXCLUDE_FROM_RECENTS, false)
+        var enableExcludeFromRecents: Boolean by SharedPreference(SP_ENABLE_EXCLUDE_FROM_RECENTS, true)
 
         //是否转发应用通知
         var enableCactus: Boolean by SharedPreference(SP_ENABLE_CACTUS, true)

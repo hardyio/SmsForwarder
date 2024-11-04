@@ -1,8 +1,6 @@
 package com.idormy.sms.forwarder.fragment
 
 import android.annotation.SuppressLint
-import android.app.ActivityManager
-import android.content.Context
 import android.os.Build
 import android.text.InputType
 import android.text.TextUtils
@@ -23,7 +21,6 @@ import com.google.gson.Gson
 import com.hjq.permissions.OnPermissionCallback
 import com.hjq.permissions.Permission
 import com.hjq.permissions.XXPermissions
-import com.idormy.sms.forwarder.App
 import com.idormy.sms.forwarder.App.Companion.FORWARD_STATUS_MAP
 import com.idormy.sms.forwarder.adapter.MsgPagingAdapter
 import com.idormy.sms.forwarder.core.BaseFragment
@@ -289,20 +286,6 @@ class MainFragment : BaseFragment<FragmentMainBinding?>(), MsgPagingAdapter.OnIt
                 }
             } catch (ex: Exception) {
                 ex.printStackTrace()
-            }
-        }
-
-        //开启:在最近任务列表中隐藏
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            SettingUtils.enableExcludeFromRecents = true
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                val am = App.context.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
-                am.let {
-                    val tasks = it.appTasks
-                    if (!tasks.isNullOrEmpty()) {
-                        tasks[0].setExcludeFromRecents(true)
-                    }
-                }
             }
         }
     }
