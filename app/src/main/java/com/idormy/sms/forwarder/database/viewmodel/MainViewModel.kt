@@ -35,6 +35,7 @@ class MainViewModel : ViewModel() {
                 override fun onError(e: ApiException) {
                     //e.printStackTrace()
                     Log.e(TAG, e.detailMessage)
+                    XToastUtils.error(e.code)
                 }
 
                 override fun onSuccess(response: String) {
