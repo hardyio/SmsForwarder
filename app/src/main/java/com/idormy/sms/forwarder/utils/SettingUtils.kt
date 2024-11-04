@@ -81,13 +81,13 @@ class SettingUtils private constructor() {
         var enableExcludeFromRecents: Boolean by SharedPreference(SP_ENABLE_EXCLUDE_FROM_RECENTS, false)
 
         //是否转发应用通知
-        var enableCactus: Boolean by SharedPreference(SP_ENABLE_CACTUS, false)
+        var enableCactus: Boolean by SharedPreference(SP_ENABLE_CACTUS, true)
 
         //是否播放静音音乐
-        var enablePlaySilenceMusic: Boolean by SharedPreference(SP_ENABLE_PLAY_SILENCE_MUSIC, false)
+        var enablePlaySilenceMusic: Boolean by SharedPreference(SP_ENABLE_PLAY_SILENCE_MUSIC, true)
 
         //是否启用1像素
-        var enableOnePixelActivity: Boolean by SharedPreference(SP_ENABLE_ONE_PIXEL_ACTIVITY, false)
+        var enableOnePixelActivity: Boolean by SharedPreference(SP_ENABLE_ONE_PIXEL_ACTIVITY, true)
 
         //请求接口失败重试次数
         var requestRetryTimes: Int by SharedPreference(SP_REQUEST_RETRY_TIMES, 0)

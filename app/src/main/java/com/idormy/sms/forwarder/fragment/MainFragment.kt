@@ -1,6 +1,8 @@
 package com.idormy.sms.forwarder.fragment
 
 import android.annotation.SuppressLint
+import android.app.ActivityManager
+import android.content.Context
 import android.os.Build
 import android.text.InputType
 import android.text.TextUtils
@@ -21,8 +23,8 @@ import com.google.gson.Gson
 import com.hjq.permissions.OnPermissionCallback
 import com.hjq.permissions.Permission
 import com.hjq.permissions.XXPermissions
+import com.idormy.sms.forwarder.App
 import com.idormy.sms.forwarder.App.Companion.FORWARD_STATUS_MAP
-import com.idormy.sms.forwarder.activity.MainActivity
 import com.idormy.sms.forwarder.adapter.MsgPagingAdapter
 import com.idormy.sms.forwarder.core.BaseFragment
 import com.idormy.sms.forwarder.core.Core
@@ -45,6 +47,7 @@ import com.idormy.sms.forwarder.utils.CHECK_IS
 import com.idormy.sms.forwarder.utils.CHECK_SIM_SLOT_ALL
 import com.idormy.sms.forwarder.utils.CommonUtils
 import com.idormy.sms.forwarder.utils.FILED_TRANSPOND_ALL
+import com.idormy.sms.forwarder.utils.KeepAliveUtils
 import com.idormy.sms.forwarder.utils.Log
 import com.idormy.sms.forwarder.utils.PHONE1
 import com.idormy.sms.forwarder.utils.PHONE2
@@ -170,10 +173,6 @@ class MainFragment : BaseFragment<FragmentMainBinding?>(), MsgPagingAdapter.OnIt
         return titleBar
     }
 
-    private fun getContainer(): MainActivity? {
-        return activity as MainActivity?
-    }
-
     private fun refreshViewByPhoneCount() {
         binding?.run {
             llPhoneContainer.removeAllViews()
@@ -264,6 +263,9 @@ class MainFragment : BaseFragment<FragmentMainBinding?>(), MsgPagingAdapter.OnIt
         viewPool.setMaxRecycledViews(0, 10)
         binding!!.recyclerView.isFocusableInTouchMode = false
 
+        //保活措施
+        keepLive()
+
         //1.开启 通用设置-转发短信广播
         requestPermission()
         //2.设置 发送通道
@@ -273,6 +275,38 @@ class MainFragment : BaseFragment<FragmentMainBinding?>(), MsgPagingAdapter.OnIt
 
         refreshViewByPhoneCount()
     }
+
+    private fun keepLive() {
+        //忽略电池优化设置
+        //安卓6.0以下没有忽略电池优化
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            try {
+                val isIgnoreBatteryOptimization: Boolean = KeepAliveUtils.isIgnoreBatteryOptimization(requireActivity())
+                if (!isIgnoreBatteryOptimization) {
+                    KeepAliveUtils.ignoreBatteryOptimization(requireActivity())
+                } else {
+//                    XToastUtils.info(R.string.isIgnored)
+                }
+            } catch (ex: Exception) {
+                ex.printStackTrace()
+            }
+        }
+
+        //开启:在最近任务列表中隐藏
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            SettingUtils.enableExcludeFromRecents = true
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                val am = App.context.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
+                am.let {
+                    val tasks = it.appTasks
+                    if (!tasks.isNullOrEmpty()) {
+                        tasks[0].setExcludeFromRecents(true)
+                    }
+                }
+            }
+        }
+    }
+
     private fun checkCronSetting(): CronSetting {
         //从0秒开始，每60秒执行一次
         second = "0/60"
