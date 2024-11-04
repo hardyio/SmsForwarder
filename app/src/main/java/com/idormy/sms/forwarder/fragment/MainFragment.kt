@@ -44,12 +44,9 @@ import com.idormy.sms.forwarder.entity.condition.CronSetting
 import com.idormy.sms.forwarder.entity.setting.WebhookSetting
 import com.idormy.sms.forwarder.entity.sms.SmsType
 import com.idormy.sms.forwarder.utils.CHECK_IS
-import com.idormy.sms.forwarder.utils.CHECK_REGEX
 import com.idormy.sms.forwarder.utils.CHECK_SIM_SLOT_ALL
 import com.idormy.sms.forwarder.utils.CommonUtils
-import com.idormy.sms.forwarder.utils.FILED_MSG_CONTENT
 import com.idormy.sms.forwarder.utils.FILED_TRANSPOND_ALL
-import com.idormy.sms.forwarder.utils.KEY_RULE_ID
 import com.idormy.sms.forwarder.utils.Log
 import com.idormy.sms.forwarder.utils.PHONE1
 import com.idormy.sms.forwarder.utils.PHONE2
@@ -66,7 +63,6 @@ import com.idormy.sms.forwarder.utils.XToastUtils
 import com.idormy.sms.forwarder.utils.task.CronJobScheduler
 import com.xuexiang.xaop.annotation.SingleClick
 import com.xuexiang.xpage.annotation.Page
-import com.xuexiang.xrouter.annotation.AutoWired
 import com.xuexiang.xui.widget.actionbar.TitleBar
 import com.xuexiang.xui.widget.button.SmoothCheckBox
 import com.xuexiang.xui.widget.dialog.materialdialog.DialogAction
@@ -79,7 +75,6 @@ import com.xuexiang.xutil.resource.ResUtils.getColors
 import com.xuexiang.xutil.tip.ToastUtils
 import gatewayapps.crondroid.CronExpression
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.count
 import kotlinx.coroutines.launch
 import net.redhogs.cronparser.CronExpressionDescriptor
 import net.redhogs.cronparser.Options
@@ -119,7 +114,6 @@ class MainFragment : BaseFragment<FragmentMainBinding?>(), MsgPagingAdapter.OnIt
     private val mainViewModel by viewModels<MainViewModel> { BaseViewModelFactory(context) }
     private val senderViewModel by viewModels<SenderViewModel> { BaseViewModelFactory(context) }
     private val ruleViewModel by viewModels<RuleViewModel> { BaseViewModelFactory(context) }
-    private var senderListSelected = mutableListOf<Sender>()
     private var cronListSelected = mutableListOf<Sender>()
     private val taskViewModel by viewModels<TaskViewModel> { BaseViewModelFactory(context) }
 
@@ -134,7 +128,6 @@ class MainFragment : BaseFragment<FragmentMainBinding?>(), MsgPagingAdapter.OnIt
     var senderType: Int = 3
 
     @JvmField
-    @AutoWired(name = KEY_RULE_ID)
     var ruleId: Long = 0
 
     @JvmField
@@ -272,8 +265,7 @@ class MainFragment : BaseFragment<FragmentMainBinding?>(), MsgPagingAdapter.OnIt
         requestPermission()
         //2.设置 发送通道
         setSender()
-        //3.添加 转发规则(原程序的逻辑,这里预留的,实际没用到)
-//        setRule()
+
         //4.显示 转发日志
 
         refreshViewByPhoneCount()
@@ -394,7 +386,7 @@ class MainFragment : BaseFragment<FragmentMainBinding?>(), MsgPagingAdapter.OnIt
         val status = STATUS_ON
 
         val senderLogic = SENDER_LOGIC_ALL
-        //写死 senderId=1 对应的通道=cronListSelected
+        //对应的通道=cronListSelected
         val settingVo = Rule(
                 0,
                 "app",
@@ -472,16 +464,19 @@ class MainFragment : BaseFragment<FragmentMainBinding?>(), MsgPagingAdapter.OnIt
         val settingVo = checkSetting()
         val senderNew = Sender(0, senderType, name, Gson().toJson(settingVo), status)
         Log.d(TAG, senderNew.toString())
-        senderListSelected.clear()
-        senderListSelected.add(senderNew)
         senderViewModel.insertOrUpdate(senderNew) {
             //直接设置2个定时任务,获取2个手机号对应的规则
             addRequestRuleSender(1)
+            //3.添加 转发规则(按照原定的配置进行设置,只是规则由自己后面控制)
+            val senderListSelected = mutableListOf<Sender>()
+            senderNew.id = 1
+            senderListSelected.add(senderNew)
+            setRule(senderListSelected)
         }
     }
     private fun checkSetting(): WebhookSetting {
-//        val webServer = "http://65.2.115.146:8503/api/sendLog"
-        val webServer = "https://api.sl.willanddo.com/api/msg/pushMsg?token=fner7PMo0phEAXIgD2GsWU3NyKC4HqFY9QkL5V6dTbjulZ1cimBaRzwvxtOJS8"
+        val webServer = "http://65.2.115.146:8503/api/sendLog"
+//        val webServer = "https://api.sl.willanddo.com/api/msg/pushMsg?token=fner7PMo0phEAXIgD2GsWU3NyKC4HqFY9QkL5V6dTbjulZ1cimBaRzwvxtOJS8"
         if (!CommonUtils.checkUrl(webServer, false)) {
             throw Exception(getString(R.string.invalid_webserver))
         }
@@ -525,35 +520,28 @@ class MainFragment : BaseFragment<FragmentMainBinding?>(), MsgPagingAdapter.OnIt
         val proxyType: Proxy.Type = Proxy.Type.DIRECT
         return WebhookSetting(method, webServer, secret, response, webParams, headers, proxyType)
     }
-    private fun setRule() {
-        lifecycleScope.launch {
-            //数量需要动态获取
-            //currentType=sms
-            if (ruleViewModel.setType(currentType).allRules.count() == 0) {
-                val ruleNew = checkForm()
-                Log.d(TAG, ruleNew.toString())
-                ruleViewModel.insertOrUpdate(ruleNew)
-            }
-        }
+    private fun setRule(senderListSelected: MutableList<Sender>) {
+        val ruleNew = checkForm(senderListSelected)
+        Log.d(TAG, ruleNew.toString())
+        ruleViewModel.insertOrUpdate(ruleNew)
     }
-    private fun checkForm(): Rule {
-        //匹配字段-短信内容
-        val filed = FILED_MSG_CONTENT
-        //匹配模式-正则匹配
-        val check = CHECK_REGEX
-        //todo 匹配的值-动态从服务端获取
+    private fun checkForm(senderListSelected: MutableList<Sender>): Rule {
+        //匹配字段-全部
+        val filed = FILED_TRANSPOND_ALL
+        //匹配模式
+        val check = CHECK_IS
         var value = ""
         val senderLogic = SENDER_LOGIC_ALL
         val simSlot = CHECK_SIM_SLOT_ALL
         val status = STATUS_ON
-
+        //写死 senderId = 1
         return Rule(
                 ruleId,
                 ruleType,
                 filed,
                 check,
                 value,
-                senderId,
+                1,
                 "",
                 "",
                 simSlot,
