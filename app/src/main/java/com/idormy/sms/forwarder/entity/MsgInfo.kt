@@ -51,11 +51,10 @@ data class MsgInfo(
                 getString(R.string.tag_sms) + "\n" +
                 getString(R.string.tag_card_slot) + "\n" +
                 when (type) {
-                    "sms", "call" -> "SubId：${getString(R.string.tag_card_subid)}\n"
+                    "sms", "call" -> "\n"
                     "app" -> "UID：${getString(R.string.tag_uid)}\n"
                     else -> ""
                 } +
-                getString(R.string.tag_receive_time) + "\n" +
                 getString(R.string.tag_device_name)
 
         //优先取转发规则的自定义模板，留空则取全局设置
